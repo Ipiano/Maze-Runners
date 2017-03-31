@@ -33,11 +33,11 @@ public:
             iterator operator++(int){_curr++; return iterator(_curr-1);}
             iterator operator--(int){_curr--; return iterator(_curr+1);}
 
-            void operator +(unsigned int n){_curr += n;}
-            void operator -(unsigned int n){_curr -= n;}
+            iterator operator +(unsigned int n){_curr += n; return *this;}
+            iterator operator -(unsigned int n){_curr -= n; return *this;}
 
-            void operator +=(unsigned int n){_curr += n;}
-            void operator -=(unsigned int n){_curr -= n;}
+            iterator& operator +=(unsigned int n){_curr += n; return *this;}
+            iterator& operator -=(unsigned int n){_curr -= n; return *this;}
 
             const MapTile& operator*(){return *_curr;}
     };

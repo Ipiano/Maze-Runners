@@ -80,11 +80,11 @@ void MazeVisualizer::_drawCell(const unsigned int& x, const unsigned int& y, con
         //cerr << "\t" << _buffW*i*3 << endl;
         for(int j=0; j<thsW; j++)
         {
-            if((north && i < _wall) || (south && i >= _cellH-_wall)
-                || (west && j < _wall) || (east && j >= _cellW-_wall))
+            if((north && i < _wall) ||
+               (west && j < _wall))
             {
                 //cerr << "\t\tWall" << endl;
-                *(iter++) = *(iter++) = *(iter++) = 255;
+                *(iter++) = *(iter++) = *(iter++) = 0;
             }
             else
             {
@@ -127,9 +127,11 @@ void MazeVisualizer::draw(const DrawingCanvas* display)
 
         //cerr << "Remaining space " << _exW << ", " << _exH << endl;
 
-        _wall = (int)std::min(_cellW, _cellH)*0.1;
+	
+        _wall = (int)std::min(_cellW, _cellH)*0.3;
         if(_cellW > 1 && _cellH > 1 && _wall < 1) _wall = 1;
-
+	
+	
         //cout << "Drawing maze with " << _cellW << " px x " << _cellH << " px cells and " << _wall << " px walls" << endl;
 
         _buffW = _width;
@@ -138,19 +140,17 @@ void MazeVisualizer::draw(const DrawingCanvas* display)
 
         //cout << "Buffer is " << _buffW << " x " << _buffH << " = " << _bufferSize << endl;
 
-        if(_cellW == 0 || _cellH == 0)
+        if(_cellW > 0 || _cellH > 0)
         {
-            cout << "Maze too big for " << _width << " x " << _height << endl;
-            return;
-        }
-        _buffer = new unsigned char[_bufferSize];
+            _buffer = new unsigned char[_bufferSize];
 
-        auto iter = maze.begin();
-        for(unsigned int i=0; i<_mheight; i++)
-        {
-            for(unsigned int j=0; j<_mwidth; j++)
+            auto iter = maze.begin();
+            for(unsigned int i=0; i<_mheight; i++)
             {
-                _drawCell(j, i, *(iter++));
+                for(unsigned int j=0; j<_mwidth; j++)
+                {
+                    _drawCell(j, i, *(iter++));
+                }
             }
         }
         
@@ -158,8 +158,7 @@ void MazeVisualizer::draw(const DrawingCanvas* display)
     }
 
     std::unordered_map<Player*, unsigned int>* players = _maze->getPlayerData();
-
-    //Redraw places players were previously
+        //Redraw places players were previously
     for(auto p : *players)
     {
         //cout << "Draw player " << p.first << " : " << p.second << endl;
@@ -167,7 +166,15 @@ void MazeVisualizer::draw(const DrawingCanvas* display)
         point ploc = maze.players[p.second];
 
         _addColor(ploc.x, ploc.y, color{pcolor[0]/3, pcolor[1]/3, pcolor[2]/3});
+    }
 
+    if(_buffer == nullptr) return;
+
+    //Redraw places players were previously
+    for(auto p : *players)
+    {
+        //cout << "Draw player " << p.first << " : " << p.second << endl;
+        point ploc = maze.players[p.second];
         try{
             _drawCell(ploc.x+1, ploc.y, maze.at(point{ploc.x+1, ploc.y}));
         }catch(exception& ex){}

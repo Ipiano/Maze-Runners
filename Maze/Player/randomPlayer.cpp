@@ -3,6 +3,7 @@
 #include <cmath>
 #include <ctime>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -23,13 +24,14 @@ MapTile::Direction RandomPlayer::move(const MapTile* surroundings,             /
                                 const uint& area_width, const uint& area_height, //Size of local area
                                 const uint& loc_x, const uint& loc_y)            //Location in local grid
 {
-    MapTile loc = surroundings[loc_y*area_width + loc_x];
+    static vector<unsigned char> moves;
+    moves.clear();
 
-    unsigned char dir;
-    do
-    {
-        dir = rand()%5 * 2;
-        if(dir == 6) dir = 1;
-    }while((dir & loc.exits) == 0);
-    return (MapTile::Direction)(dir);
+    unsigned char valid = surroundings[loc_y*area_width + loc_x].exits;
+
+    unsigned char dir = 1;
+    for(int i=0; i<4; i++, dir <<= 1)
+        if((valid & dir) != 0) moves.push_back(dir);
+
+    return (MapTile::Direction)(moves[rand()%moves.size()]);
 }

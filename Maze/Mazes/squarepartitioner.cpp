@@ -12,21 +12,31 @@ MapTile* SquarePartitioner::getMazeSection(unsigned int& width, unsigned int& he
         width = height = 11;
         reuse = new MapTile[width*height];
     }
-    MapTile* iter = reuse;
+    MapTile* outiter = reuse;
+    auto initer = m.begin();
+    unsigned int mwidth = m.width();
+    unsigned int mheight = m.height();
+    unsigned int w2 = width/2;
+    unsigned int h2 = height/2;
+    unsigned int y_start = target_loc.y-h2;
+    unsigned int x_start = target_loc.x-w2;
 
-    for(int i=0, i_=target_loc.y-height/2; i<height; i++, i_++)
+    for(int i=0, i_ = y_start; i<height; i++, i_++)
     {
-        for(int j=0, j_=target_loc.x-width/2; j<width; j++, j_++)
+        int offset = i_*mwidth + (target_loc.x < w2 ? 0 : x_start);
+        initer = m.begin() + std::max(offset, 0);
+
+        for(int j=0, j_ = x_start; j<width; j++, j_++)
         {
-            try
+            if(i_ >= 0 && i_ < mheight && j_ >= 0 && j_ < mwidth)
             {
-                *iter = m.at(point{j_, i_});
+                *outiter = *initer;
+                ++initer;
             }
-            catch(exception& ex)
-            {
-                *iter = MapTile{0};
-            }
-            iter++;
+            else
+                *outiter = MapTile{0};
+
+            ++outiter;
         }
     }
 
