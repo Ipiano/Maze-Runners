@@ -8,7 +8,7 @@
 
 class RandomPlayer : public Player
 {
-    unsigned char _color[3] = {0, 0, 255};
+    unsigned char _color[3] = {255, 0, 0};
 public:
     RandomPlayer();
     virtual ~RandomPlayer();

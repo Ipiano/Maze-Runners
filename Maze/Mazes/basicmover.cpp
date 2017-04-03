@@ -14,7 +14,11 @@ point BasicMover::movePlayer(const int& playerId,
     std::unordered_map<int, std::unordered_map<int, bool>>& visited = _visited[playerId];
     visited[out.x][out.y] = true;
 
-    if(move.attemptedMove == Move::MOVETO)
+    if(move.attemptedMove == Move::NOOP)
+    {
+        return out;
+    }
+    else if(move.attemptedMove == Move::MOVETO)
     {
         const MazePoint& target = move.destination;
         if(target.x == 1 && target.y == 0 && (tile & (unsigned char)MapTile::Direction::EAST))
@@ -47,7 +51,6 @@ point BasicMover::movePlayer(const int& playerId,
     else
     {
         cout << "Unsupported move by player " << playerId << " : " << (unsigned int)move.attemptedMove << endl;
-                    cin.get();
     }
 
     return out;

@@ -67,10 +67,16 @@ bool JumperPlayer::nextToUnknown(const MazePoint& p)
     return false;
 }
 
+bool JumperPlayer::isExit(const MazePoint& p)
+{
+    return explored[p.x][p.y].isExit;
+}
+
 void JumperPlayer::bfsDead(const MazePoint& start)
 {
     //Don't mark already known dead or visited places'
-    if(visited[start.x][start.y] || dead[start.x][start.y] && !nextToUnknown(start)) return;
+    if(visited[start.x][start.y] || dead[start.x][start.y] ||
+        nextToUnknown(start) || isExit(start)) return;
 
     //cerr << "BFS from " << start.x << ", " << start.y << endl;
     static vector<MazePoint> dirs;

@@ -55,6 +55,7 @@ maze DFSGenerator::generateMaze(unsigned int players)
     for(int i=0; i<players; i++)
         out.players.push_back(point{0, 0});
     out.exit = point{rand()%_w, rand()%_h};
+    _maze[_w*out.exit.y + out.exit.x].isExit = true;
 
     return out;
 }

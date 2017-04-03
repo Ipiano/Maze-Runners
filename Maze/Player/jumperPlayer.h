@@ -29,6 +29,7 @@ public:
     void getValidDirections(const MazePoint& loc, std::vector<MazePoint>& out);
     void bfsDead(const MazePoint& start);
     bool nextToUnknown(const MazePoint& p);
+    bool isExit(const MazePoint& p);
 
     //Sets up the player to run a specific maze type
     virtual void setMazeSettings(const MazeSettings& settings)

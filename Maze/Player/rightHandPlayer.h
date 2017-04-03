@@ -9,7 +9,7 @@
 class RightHandPlayer : public Player
 {
     unsigned char _currDir = 1;
-    unsigned char _color[3] = {255, 255, 0};
+    unsigned char _color[3] = {0, 255, 255};
 public:
     RightHandPlayer();
     virtual ~RightHandPlayer();
