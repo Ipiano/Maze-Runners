@@ -5,7 +5,7 @@
 
 using namespace std;
 
-AnimatedMaze::AnimatedMaze(MazeRunner* m) : _loader(m), _maze(m)
+AnimatedMaze::AnimatedMaze(MazeRunnerBase* m) : _maze(m)
 {
 }
 
@@ -16,8 +16,6 @@ void AnimatedMaze::stop()
 
 void AnimatedMaze::reset()
 {
-    _loader.unloadPlayers();
-    _loader.loadPlayers("./Players");
     _maze->setup();
 }
 
@@ -28,6 +26,4 @@ void AnimatedMaze::tick()
         cout << "Maze done!" << endl;
         quit();
     }
-
-    glutPostRedisplay();
 }

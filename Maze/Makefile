@@ -11,8 +11,8 @@ CFLAGS = -std=c++11 -Wall -O
 CXXFLAGS = $(CFLAGS)
 
 PLAYEROBJS = ./Player/randomPlayer.o ./Player/rightHandPlayer.o ./Player/sointerface.o
-GAMEOBJS = main.o mazerunner.o playerloader.o ./Mazes/basicmover.o \
-			./Mazes/dfsgenerator.o ./Mazes/squarepartitioner.o
+GAMEOBJS = ./Mazes/basicmover.o \
+			./Mazes/dfsgenerator.o ./Mazes/squarepartitioner.o main.o 
 
 # Math library
 LIBS = -lm -ldl
@@ -38,6 +38,6 @@ debug: all
 clean:
 	find . -type f -name '*.o' -exec rm {} +
 	find . -type f -name '*.so' -exec rm {} +
-	rm -f *~ libplayer.so
+	rm game
 
 remake: clean all

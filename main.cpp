@@ -12,6 +12,7 @@
 
 #include "mazevisualizer.h"
 #include "animatedmaze.h"
+#include "./Maze/playerloader.h"
 
 using namespace std;
 
@@ -23,18 +24,22 @@ int main(int argc, char** argv)
     canvas.init(argc, argv, "Maze", 520, 520);
     input.setAsActiveHandler();
 
-    DFSGenerator mazeGen(100, 100);
+    DFSGenerator mazeGen(200, 100);
     BasicMover playerMove;
     SquarePartitioner part;
-    MazeRunner maze(&mazeGen, &part, &playerMove, true, true);
+    MazeRunner<Player> m(&mazeGen, &part, &playerMove, true, true);
+    PlayerLoader<Player> g(&m);
 
-    MazeVisualizer visual(&maze);
-    AnimatedMaze animator(&maze);
+    g.loadPlayers("./Players");
+
+    MazeVisualizer visual(&m);
+    AnimatedMaze animator(&m);
     animator.reset();
 
     ScreenHandler screen(&canvas, &input, &visual);
 
     input.addIdleReceiver(&animator, &AnimatedMaze::tick);
+    input.addIdleReceiver(&glutPostRedisplay);
 
     glutMainLoop();
 

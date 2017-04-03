@@ -2,15 +2,14 @@
 #define _BASICMOVER_H
 
 #include "../types.h"
-#include "backend_types.h"
-#include "playermover.h"
+#include "../Interfaces/playermover.h"
+#include "../Interfaces/player.h"
 
-class BasicMover : public PlayerMover
+class BasicMover : public PlayerMover<Player>
 {
 public:
-
-    point movePlayer(const point& player,
-                     const MapTile::Direction& moveDir,
+    point movePlayer(const int& playerId,
+                     const PlayerMove& move,
                      const maze& m);
 };
 

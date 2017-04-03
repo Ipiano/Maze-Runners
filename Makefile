@@ -18,8 +18,8 @@ WIDGDIR = $(IODIR)/Widgets
 LAYDIR = $(WIDGDIR)/Layouts
 GLUTDIR = $(DRAWDIR)/GlutInterfaces
 
-GAMEOBJS = $(MAZESDIR)/basicmover.o $(MAZESDIR)/dfsgenerator.o $(MAZEDIR)/playerloader.o \
-		   $(MAZEDIR)/mazerunner.o $(MAZESDIR)/squarepartitioner.o
+GAMEOBJS = $(MAZESDIR)/basicmover.o $(MAZESDIR)/dfsgenerator.o \
+		   $(MAZESDIR)/squarepartitioner.o
 ANIMOBJS = animatedmaze.o mazevisualizer.o main.o
 
 # Turn on optimization and warnings, use c++11:

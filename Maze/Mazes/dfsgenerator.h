@@ -1,7 +1,7 @@
 #ifndef _DFS_GEN_H
 #define _DFS_GEN_H
 
-#include "mazegenerator.h"
+#include "../Interfaces/mazegenerator.h"
 
 class DFSGenerator : public MazeGenerator
 {

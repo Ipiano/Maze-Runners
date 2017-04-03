@@ -2,15 +2,15 @@
 #define _SQUAREPARTITIONER_H
 
 #include "../types.h"
-#include "backend_types.h"
-#include "mazepartitioner.h"
+#include "../Interfaces/mazepartitioner.h"
+#include "../Interfaces/player.h"
 
-class SquarePartitioner : public MazePartitioner
+class SquarePartitioner : public MazePartitioner<Player>
 {
 public:
 
-    MapTile* getMazeSection(unsigned int& width, unsigned int& height,
-                            const point& target_loc, point& relative_loc,
+    virtual MapTile* getMazeSection(unsigned int& width, unsigned int& height,
+                            const unsigned int& player, point& relative_loc,
                             const maze& m, MapTile* reuse = nullptr);
 };
 

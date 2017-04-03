@@ -1,7 +1,7 @@
 #ifndef SOINTERFACE_H
 #define SOINTERFACE_H
 
-#include "player.h"
+#include "../Interfaces/player.h"
 
 extern "C" Player* createPlayer();
 

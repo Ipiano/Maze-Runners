@@ -4,7 +4,7 @@
 #include <string>
 
 #include "../types.h"
-#include "player.h"
+#include "../Interfaces/player.h"
 
 class RandomPlayer : public Player
 {
@@ -26,7 +26,7 @@ public:
     //return a direction to move. If it is an invalid direction, they forfeit their
     //move that turn. The pointer is not guaranteed to remain valid after the function
     //returns, so don't try to save it
-    virtual MapTile::Direction move(const MapTile* surroundings,                //Const pointer to local area
+    virtual PlayerMove move(const MapTile* surroundings,                //Const pointer to local area
                             const uint& area_width, const uint& area_height,    //Size of local area
                             const uint& loc_x, const uint& loc_y);          //Location in local grid
 };

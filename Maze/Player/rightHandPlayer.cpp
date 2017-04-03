@@ -27,14 +27,14 @@ unsigned char RightHandPlayer::rightDir()
 //Main player interface. The game will call getMove and the player will
 //return a direction to move. If it is an invalid direction, they forfeit their
 //move that turn
-MapTile::Direction RightHandPlayer::move(const MapTile* surroundings,             //Const pointer to local area
+PlayerMove RightHandPlayer::move(const MapTile* surroundings,             //Const pointer to local area
                                 const uint& area_width, const uint& area_height, //Size of local area
                                 const uint& loc_x, const uint& loc_y)            //Location in local grid
 {
     MapTile loc = surroundings[area_width*loc_y + loc_x];
 
-    _currDir = rightDir();
+    _currDir = leftDir();
     while((loc.exits & _currDir) == 0)
-        _currDir = leftDir();
+        _currDir = rightDir();
     return (MapTile::Direction)_currDir;
 }

@@ -4,16 +4,14 @@
 #include "IteratedAlgo.h"
 #include "DrawingCanvas.h"
 #include "mazevisualizer.h"
-#include "./Maze/mazerunner.h"
-#include "./Maze/playerloader.h"
+#include "./Maze/mazerunnerbase.h"
 
 class AnimatedMaze : public IteratedAlgo
 {
-    PlayerLoader _loader;
-    MazeRunner* _maze;
+    MazeRunnerBase* _maze;
 
 public:
-    AnimatedMaze(MazeRunner* m);
+    AnimatedMaze(MazeRunnerBase* m);
 
     void stop();
     virtual void reset();

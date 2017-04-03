@@ -5,7 +5,7 @@
 
 using namespace std;
 
-MazeVisualizer::MazeVisualizer(MazeRunner* m) : _maze(m)
+MazeVisualizer::MazeVisualizer(MazeRunnerBase* m) : _maze(m)
 {
 
 }

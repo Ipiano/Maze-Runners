@@ -18,9 +18,8 @@ RandomPlayer::~RandomPlayer()
 }
 
 //Main player interface. The game will call getMove and the player will
-//return a direction to move. If it is an invalid direction, they forfeit their
-//move that turn
-MapTile::Direction RandomPlayer::move(const MapTile* surroundings,             //Const pointer to local area
+//return a move. If it is an invalid move, they forfeit their turn
+PlayerMove RandomPlayer::move(const MapTile* surroundings,             //Const pointer to local area
                                 const uint& area_width, const uint& area_height, //Size of local area
                                 const uint& loc_x, const uint& loc_y)            //Location in local grid
 {

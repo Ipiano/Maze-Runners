@@ -10,11 +10,11 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    DFSGenerator mazeGen(100, 100);
+    DFSGenerator mazeGen(400, 400);
     BasicMover playerMove;
     SquarePartitioner part;
-    MazeRunner m(&mazeGen, &part, &playerMove, true, true);
-    PlayerLoader g(&m);
+    MazeRunner<Player> m(&mazeGen, &part, &playerMove, true, true);
+    PlayerLoader<Player> g(&m);
 
     g.loadPlayers("./Players");
 

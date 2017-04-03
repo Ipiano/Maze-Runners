@@ -1,7 +1,7 @@
 #ifndef MAZEVISUALIZER_H
 #define MAZEVISUALIZER_H
 
-#include "./Maze/mazerunner.h"
+#include "./Maze/mazerunnerbase.h"
 #include "DrawingCanvas.h"
 #include "Widget.h"
 #include "Point.h"
@@ -17,7 +17,7 @@ class MazeVisualizer : public Widget
     unsigned int _width = 0, _height = 0;
     Point _loc;
 
-    MazeRunner* _maze = nullptr;
+    MazeRunnerBase* _maze = nullptr;
     unsigned char* _buffer = nullptr;
     unsigned int _bufferSize, _buffW, _buffH;
     unsigned int _mwidth, _mheight;
@@ -32,7 +32,7 @@ class MazeVisualizer : public Widget
     void _addColor(const unsigned int& x, const unsigned int& y, const color& rgb);
 
 public:
-    MazeVisualizer(MazeRunner* m);
+    MazeVisualizer(MazeRunnerBase* m);
     ~MazeVisualizer();
 
     void draw(const DrawingCanvas* display);
