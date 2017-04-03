@@ -5,7 +5,7 @@ using namespace std;
 
 MapTile* SquarePartitioner::getMazeSection(unsigned int& width, unsigned int& height,
                             const unsigned int& player, point& relative_loc,
-                            const maze& m, MapTile* reuse)
+                            maze& m, MapTile* reuse)
 {
     point target_loc = m.players[player];
     if(reuse == nullptr)
@@ -35,7 +35,10 @@ MapTile* SquarePartitioner::getMazeSection(unsigned int& width, unsigned int& he
                 ++initer;
             }
             else
-                *outiter = MapTile{0};
+            {
+                *outiter = MapTile();
+                outiter->exits = 0;
+            }
 
             ++outiter;
         }

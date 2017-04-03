@@ -2,6 +2,8 @@
 #define MAZE_H
 
 #include <unordered_map>
+#include <cmath>
+#include <ctime>
 #include <vector>
 
 #include "./Interfaces/player.h"
@@ -22,19 +24,19 @@ class MazeRunner : public MazeRunnerBase
     MazePartitioner<PlayerType>* _part;
     PlayerMover<PlayerType>* _move;
     maze _m;
-
     bool _tellD, _tellE;
-    
+    unsigned int _seed;
+
 protected:
     uint _turn_no;
     std::unordered_map<Player*, unsigned int> _players;
     std::unordered_map<Player*, PlayerMove> _moves;
 
 public:
-    MazeRunner(MazeGenerator* gen, MazePartitioner<PlayerType>* part, PlayerMover<PlayerType>* move, bool tellDims, bool tellExit);
+    MazeRunner(MazeGenerator* gen, MazePartitioner<PlayerType>* part, PlayerMover<PlayerType>* move, bool tellDims, bool tellExit, unsigned int seed = 0);
     ~MazeRunner();
 
-    const maze& getMaze() { return _m; }
+    maze& getMaze() { return _m; }
     std::unordered_map<Player*, unsigned int>* getPlayerData(){return &_players;}
 
     void addPlayer(PlayerType* p);
@@ -54,8 +56,8 @@ public:
 
 
 template<class PlayerType>
-MazeRunner<PlayerType>::MazeRunner(MazeGenerator* gen, MazePartitioner<PlayerType>* part, PlayerMover<PlayerType>* move, bool tellDims, bool tellExit) 
-: _gen(gen), _part(part), _move(move), _tellD(tellDims), _tellE(tellExit)
+MazeRunner<PlayerType>::MazeRunner(MazeGenerator* gen, MazePartitioner<PlayerType>* part, PlayerMover<PlayerType>* move, bool tellDims, bool tellExit, unsigned int seed) 
+: _gen(gen), _part(part), _move(move), _tellD(tellDims), _tellE(tellExit), _seed(seed)
 {
 
 }
@@ -111,7 +113,6 @@ bool MazeRunner<PlayerType>::tickGame()
 
     if(!moves)
     {
-        std::cout << "No moves" << std::endl;
         return false;
     }
 
@@ -140,6 +141,12 @@ template<class PlayerType>
 void MazeRunner<PlayerType>::setup()
 {
     _m.destroy();
+
+    std::cout << "Random seed: " << _seed << std::endl;
+    if(_seed == 0)
+        srand(time(NULL));
+    else
+        srand(_seed);
 
     _turn_no = 0;
     _m = _gen->generateMaze(_players.size());

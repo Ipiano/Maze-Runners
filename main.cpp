@@ -18,16 +18,26 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
+    int width = 100, height = 100, seed = 0;
+    if(argc > 2)
+    {
+        width = stoi(argv[1]);
+        height = stoi(argv[2]);
+    }
+
+    if(argc > 3)
+        seed = stoi(argv[3]);
+
     GlutInputSignaler input;
     GlutScreenCanvas canvas;
 
     canvas.init(argc, argv, "Maze", 520, 520);
     input.setAsActiveHandler();
 
-    DFSGenerator mazeGen(200, 100);
+    DFSGenerator mazeGen(width, height);
     BasicMover playerMove;
     SquarePartitioner part;
-    MazeRunner<Player> m(&mazeGen, &part, &playerMove, true, true);
+    MazeRunner<Player> m(&mazeGen, &part, &playerMove, true, true, seed);
     PlayerLoader<Player> g(&m);
 
     g.loadPlayers("./Players");

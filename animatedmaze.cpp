@@ -23,7 +23,6 @@ void AnimatedMaze::tick()
 {
     if(!_maze->tickGame())
     {
-        cout << "Maze done!" << endl;
         quit();
     }
 }

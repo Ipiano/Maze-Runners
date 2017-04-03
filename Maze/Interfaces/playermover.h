@@ -28,7 +28,7 @@ public:
      */
     virtual point movePlayer(const int& playerId,
                      const PlayerMove& move,
-                     const maze& m) = 0;
+                     maze& m) = 0;
 };
 
 #endif

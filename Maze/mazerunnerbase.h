@@ -10,7 +10,7 @@
 class MazeRunnerBase
 {
 public:
-    virtual const maze& getMaze() = 0;
+    virtual maze& getMaze() = 0;
     virtual std::unordered_map<Player*, unsigned int>* getPlayerData() = 0;
 
     //Gets moves from all players and then

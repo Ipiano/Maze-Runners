@@ -10,7 +10,7 @@ class BasicMover : public PlayerMover<Player>
 public:
     point movePlayer(const int& playerId,
                      const PlayerMove& move,
-                     const maze& m);
+                    maze& m);
 };
 
 #endif

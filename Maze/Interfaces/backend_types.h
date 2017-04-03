@@ -6,6 +6,7 @@
 #include <string>
 #include <exception>
 #include <stdexcept>
+#include <iostream>
 
 struct point
 {
@@ -20,6 +21,7 @@ public:
     class iterator
     {
         friend class maze;
+        friend std::ostream& operator<<(std::ostream& out, const maze::iterator& m);
         MapTile* _curr;
         
         iterator(MapTile* ptr) : _curr(ptr){};
@@ -39,7 +41,8 @@ public:
             iterator& operator +=(unsigned int n){_curr += n; return *this;}
             iterator& operator -=(unsigned int n){_curr -= n; return *this;}
 
-            const MapTile& operator*(){return *_curr;}
+            MapTile& operator*(){return *_curr;}
+            MapTile* operator->(){return _curr;}
     };
 
 private:
@@ -55,7 +58,7 @@ public:
     unsigned int width() const {return _w;}
     unsigned int height() const {return _h;}
 
-    MapTile at(const point& loc) const
+    MapTile& at(const point& loc)
     {
         if(loc.x < 0 || loc.x >= _w || loc.y < 0 || loc.y >= _h)
             throw std::out_of_range("Attempted to access " + std::to_string(loc.x) + ", " + std::to_string(loc.y) + " in maze size " +
@@ -63,13 +66,18 @@ public:
         return *(_maze + _w*loc.y + loc.x);
     }
 
-    iterator begin() const {return iterator(_maze);}
-    iterator end()  const {return iterator(_maze+_w*_h+1);}
-    iterator cbegin() const {return iterator(_maze+_w*_h);}
-    iterator cend() const {return iterator(_maze-1);}
+    iterator begin() {return iterator(_maze);}
+    iterator end()  {return iterator(_maze+_w*_h+1);}
+    iterator cbegin() {return iterator(_maze+_w*_h);}
+    iterator cend() {return iterator(_maze-1);}
 
     bool valid() const {return _maze != nullptr;}
     void destroy() {delete[] _maze; _maze=nullptr;}
 };
+
+inline std::ostream& operator<<(std::ostream& out, const maze::iterator& m)
+{
+    return out << m._curr;
+}
 
 #endif

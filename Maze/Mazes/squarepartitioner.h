@@ -11,7 +11,7 @@ public:
 
     virtual MapTile* getMazeSection(unsigned int& width, unsigned int& height,
                             const unsigned int& player, point& relative_loc,
-                            const maze& m, MapTile* reuse = nullptr);
+                            maze& m, MapTile* reuse = nullptr);
 };
 
 #endif

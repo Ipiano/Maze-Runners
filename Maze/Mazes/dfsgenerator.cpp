@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
+#include <set>
 
 using namespace std;
 
@@ -13,8 +14,20 @@ maze DFSGenerator::generateMaze(unsigned int players)
     
     _maze = new MapTile[_w*_h];
     MapTile* iter = _maze;
+
+    //Assign random uids to the maze tiles
+    set<unsigned int> used;
     for(int i=0; i<_w*_h; i++)
+    {
+        unsigned int id;
+        do
+        {
+            id = rand();
+        }while(used.insert(id).second == false);
+        iter->uid = id;
+
         (iter++)->exits = 0;
+    }
 
     //Non-recursive so the stack is on the heap, allowing bigger maze
     stack<point> retrace;

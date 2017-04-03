@@ -19,6 +19,10 @@ struct MapTile
         WEST = 8
     };
 
+    vector<unsigned int> players;
+    unsigned int uid;
+    bool isExit = false;
+    bool hasStickyBomb = false;
     unsigned char exits; //Each of last 4 bytes corresponds to valid exit direction
 };
 

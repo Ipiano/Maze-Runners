@@ -6,7 +6,7 @@ using namespace std;
 
 point BasicMover::movePlayer(const int& playerId,
                     const PlayerMove& move,
-                    const maze& m)
+                    maze& m)
 {
     point out = m.players[playerId];
     unsigned char tile = m.at(out).exits;
