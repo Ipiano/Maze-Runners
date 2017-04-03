@@ -1,9 +1,9 @@
 #include "sointerface.h"
-#include "rightHandPlayer.h"
+#include "jumperPlayer.h"
 
 Player* createPlayer()
 {
-    return new RightHandPlayer();
+    return new JumperPlayer();
 }
 
 void destroyPlayer(Player* p)

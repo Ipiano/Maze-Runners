@@ -1,25 +1,47 @@
 #ifndef JUMPER_H
 #define JUMPER_H
 
-#include "../Player.h"
-
 #include <string>
+#include <stack>
+#include <unordered_map>
+#include <vector>
 
 #include "../types.h"
 #include "../Interfaces/player.h"
 
 class JumperPlayer : public Player
 {
-    unsigned char _color[3] = {0, 0, 255};
+    unsigned char _color[3] = {255, 0, 255};
+
+    std::stack<MazePoint> backtrace;
+    std::unordered_map<int, std::unordered_map<int, MapTile>> explored;
+    std::unordered_map<int, std::unordered_map<int, bool>> dead;
+    std::unordered_map<int, std::unordered_map<int, bool>> visited;
+    MazePoint nextLocation, currLocation;
+    unsigned int prevUid = 0;
+
 public:
-    RandomPlayer();
-    virtual ~RandomPlayer();
+    JumperPlayer();
+    virtual ~JumperPlayer();
+
+    void getValidDirections(const MazePoint& loc, vector<MazePoint>& out);
+    void bfsDead(const MazePoint& start);
 
     //Sets up the player to run a specific maze type
-    virtual void setMazeSettings(const MazeSettings& settings){}
+    virtual void setMazeSettings(const MazeSettings& settings)
+    {
+        visited[0][0] = true;
+        nextLocation = currLocation = MazePoint{0, 0};
+
+        explored.clear();
+        dead.clear();
+        visited.clear();
+        while(backtrace.size())
+            backtrace.pop();
+    }
 
     //Return a string to be the player's name
-    virtual std::string playerName(){return "Random";}
+    virtual std::string playerName(){return "Jumper";}
 
     //Return an unsigned char[3] RGB color array
     virtual unsigned char* playerColor(){return _color;}

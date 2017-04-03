@@ -10,7 +10,8 @@ LINK = g++
 CFLAGS = -std=c++11 -Wall -O
 CXXFLAGS = $(CFLAGS)
 
-PLAYEROBJS = ./Player/randomPlayer.o ./Player/rightHandPlayer.o ./Player/sointerface.o
+PLAYEROBJS = ./Player/randomPlayer.o ./Player/rightHandPlayer.o ./Player/sointerface.o \
+				./Player/jumperPlayer.o
 GAMEOBJS = ./Mazes/basicmover.o \
 			./Mazes/dfsgenerator.o ./Mazes/squarepartitioner.o main.o 
 

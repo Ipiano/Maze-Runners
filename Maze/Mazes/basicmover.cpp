@@ -11,27 +11,16 @@ point BasicMover::movePlayer(const int& playerId,
     point out = m.players[playerId];
     unsigned char tile = m.at(out).exits;
 
-    if(move.attemptedMove == Move::NORTH && (tile & (unsigned char)MapTile::Direction::NORTH))
+    std::unordered_map<int, std::unordered_map<int, bool>>& visited = _visited[playerId];
+    visited[out.x][out.y] = true;
+
+    if(move.attemptedMove == Move::MOVETO && (tile & (unsigned char)MapTile::Direction::NORTH))
     {
-            out.y--;
-            if(out.y < 0) out.y = m.height()-1;
-    }
-    else if(move.attemptedMove == Move::SOUTH && (tile & (unsigned char)MapTile::Direction::SOUTH))
-    {
-            out.y = (out.y+1)%m.height();
-    }
-    else if(move.attemptedMove == Move::WEST && (tile & (unsigned char)MapTile::Direction::WEST))
-    {
-            out.x--;
-            if(out.x < 0) out.x = m.width()-1;
-    }
-    else if(move.attemptedMove == Move::EAST && (tile & (unsigned char)MapTile::Direction::EAST))
-    {
-            out.x = (out.x+1)%m.width();
+           
     }
     else
     {
-            cout << "Unsupported move by player " << playerId << " : " << (unsigned char)move.attemptedMove << endl;
+        cout << "Unsupported move by player " << playerId << " : " << (unsigned char)move.attemptedMove << endl;
     }
 
     return out;

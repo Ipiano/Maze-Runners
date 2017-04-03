@@ -1,6 +1,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <vector>
+
 typedef unsigned int uint;
 
 struct MazePoint
@@ -19,7 +21,7 @@ struct MapTile
         WEST = 8
     };
 
-    vector<unsigned int> players;
+    std::vector<unsigned int> players;
     unsigned int uid;
     bool isExit = false;
     bool hasStickyBomb = false;
@@ -40,11 +42,7 @@ struct PlayerAttributes
 enum class Move
 {
     NOOP,
-    NORTH,
-    SOUTH,
-    EAST,
-    WEST,
-    TELEPORT,
+    MOVETO,
     WALLBREAK,
     WALLPHASE,
     STICKYBOMB,
@@ -54,7 +52,7 @@ enum class Move
 struct PlayerMove
 {
     Move attemptedMove;     //One of the enum Move types
-    MazePoint destination;  //Used for teleport
+    MazePoint destination;  //Used for MoveTo. Location must be one step away, or previously visited
     MapTile::Direction dir; //Used for wallbreak and wall phase
 
     //Convenience constructor for converting maptile directions
@@ -65,10 +63,22 @@ struct PlayerMove
         {
             default:
             case MapTile::Direction::NONE: attemptedMove = Move::NOOP; break;
-            case MapTile::Direction::NORTH: attemptedMove = Move::NORTH; break;
-            case MapTile::Direction::SOUTH: attemptedMove = Move::SOUTH; break;
-            case MapTile::Direction::EAST: attemptedMove = Move::EAST; break;
-            case MapTile::Direction::WEST: attemptedMove = Move::WEST; break;
+            case MapTile::Direction::NORTH: 
+                attemptedMove = Move::MOVETO; 
+                destination = MazePoint{0, -1};
+                break;
+            case MapTile::Direction::SOUTH: 
+                attemptedMove = Move::MOVETO; 
+                destination = MazePoint{0, 1};
+                break;
+            case MapTile::Direction::EAST: 
+                attemptedMove = Move::MOVETO; 
+                destination = MazePoint{1, 0};
+                break;
+            case MapTile::Direction::WEST: 
+                attemptedMove = Move::MOVETO; 
+                destination = MazePoint{-1, 0};
+                break;
         }
     }
 };
