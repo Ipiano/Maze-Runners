@@ -36,5 +36,5 @@ PlayerMove RightHandPlayer::move(const MapTile* surroundings,             //Cons
     _currDir = leftDir();
     while((loc.exits & _currDir) == 0)
         _currDir = rightDir();
-    return (MapTile::Direction)_currDir;
+    return PlayerMove((MapTile::Direction)_currDir);
 }

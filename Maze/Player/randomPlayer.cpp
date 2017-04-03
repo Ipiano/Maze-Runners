@@ -32,5 +32,5 @@ PlayerMove RandomPlayer::move(const MapTile* surroundings,             //Const p
     for(int i=0; i<4; i++, dir <<= 1)
         if((valid & dir) != 0) moves.push_back(dir);
 
-    return (MapTile::Direction)(moves[rand()%moves.size()]);
+    return PlayerMove((MapTile::Direction)(moves[rand()%moves.size()]));
 }

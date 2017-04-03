@@ -19,13 +19,16 @@ class JumperPlayer : public Player
     std::unordered_map<int, std::unordered_map<int, bool>> visited;
     MazePoint nextLocation, currLocation;
     unsigned int prevUid = 0;
+    bool teleported = false;
 
 public:
-    JumperPlayer();
-    virtual ~JumperPlayer();
+    JumperPlayer(){}
+    virtual ~JumperPlayer(){}
 
-    void getValidDirections(const MazePoint& loc, vector<MazePoint>& out);
+    void getValidMoves(const MazePoint& loc, std::vector<MazePoint>& out);
+    void getValidDirections(const MazePoint& loc, std::vector<MazePoint>& out);
     void bfsDead(const MazePoint& start);
+    bool nextToUnknown(const MazePoint& p);
 
     //Sets up the player to run a specific maze type
     virtual void setMazeSettings(const MazeSettings& settings)
