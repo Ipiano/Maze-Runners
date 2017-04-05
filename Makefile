@@ -7,7 +7,7 @@
 LINK = g++
 
 MAZEDIR = ./Maze
-MAZESDIR = $(MAZEDIR)/Mazes
+MAZESDIR = $(MAZEDIR)/Mazes/Basic
 PLAYERDIR = $(MAZEDIR)/Player
 
 ALGODIR = ./AnimAlgoLib
@@ -19,8 +19,8 @@ LAYDIR = $(WIDGDIR)/Layouts
 GLUTDIR = $(DRAWDIR)/GlutInterfaces
 
 GAMEOBJS = $(MAZESDIR)/basicmover.o $(MAZESDIR)/dfsgenerator.o \
-		   $(MAZESDIR)/squarepartitioner.o
-ANIMOBJS = animatedmaze.o mazevisualizer.o main.o
+		   $(MAZESDIR)/squarepartitioner.o $(MAZESDIR)/basicrules.o
+ANIMOBJS = animatedmaze.o main.o
 
 # Turn on optimization and warnings, use c++11:
 CFLAGS = -std=c++11 -Wall -O -I$(ALGODIR) -I$(IODIR) -I$(WIDGDIR) -I$(GLUTDIR) -I$(LAYDIR)

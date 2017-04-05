@@ -31,7 +31,6 @@ class MazeRunner : public MazeRunnerBase, public MazeRunnerAccess<PlayerType, Pl
     RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* _rules;
     
     maze<Tile> _m;
-    bool _tellD, _tellE;
     unsigned int _seed;
 
 protected:
@@ -42,7 +41,7 @@ protected:
 public:
     MazeRunner(MazeGenerator<Tile>* gen, MazePartitioner<PlayerDataType, Tile>* part, PlayerMover<PlayerDataType, PlayerMoveType, Tile>* move, 
                RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* rules,
-                bool tellDims, bool tellExit, unsigned int seed = 0);
+               unsigned int seed = 0);
     ~MazeRunner();
 
     maze<Tile>& getMaze() { return _m; }
@@ -64,8 +63,8 @@ public:
 
 RUNNER_TEMPLATE
 RUNNER_TYPE::MazeRunner(MazeGenerator<Tile>* gen, MazePartitioner<PlayerDataType, Tile>* part, PlayerMover<PlayerDataType, PlayerMoveType, Tile>* move, 
-               RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* rules, bool tellDims, bool tellExit, unsigned int seed) 
-: _gen(gen), _part(part), _move(move), _rules(rules), _tellD(tellDims), _tellE(tellExit), _seed(seed)
+               RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* rules, unsigned int seed) 
+: _gen(gen), _part(part), _move(move), _rules(rules), _seed(seed)
 {
 
 }
@@ -91,22 +90,17 @@ void RUNNER_TYPE::removePlayer(PlayerType* p)
 RUNNER_TEMPLATE
 bool RUNNER_TYPE::tickGame()
 {
-    //std::cout << "Tick maze" << std::endl;
     unsigned int w, h;
     point relative;
     bool moves = false;
-    for(auto p : _players)
+    for(auto& p : _players)
     {
         if(_rules->playerIsDone(p.second, _m)) continue;
-                
         moves = true;
 
         if(!_rules->playerGetsTurn(p.second, _m)) continue;
 
         Tile* area = _part->getMazeSection(w, h, p.second, relative, _m);
-
-        //std::cout << w << ", " << h << ", " << relative.x << ", " << relative.y << std::endl;
-        //std::cout << (int)area[relative.y * w + relative.x].exits << std::endl;
 
         _moves[p.first] = p.first->move(area, w, h, relative.x, relative.y);
     }
@@ -116,10 +110,9 @@ bool RUNNER_TYPE::tickGame()
         return false;
     }
 
-    //std::cout << "Moving players" << std::endl;
-    for(auto p : _players)
+    for(auto& p : _players)
     {
-        //std::cout << p.first << " : " << p.second << std::endl;
+        std::cout << p.first << std::endl;
         if(!_rules->playerGetsTurn(p.second, _m) || _rules->playerIsDone(p.second, _m)) continue;
 
         _move->movePlayer(p.second, _moves[p.first], _m);

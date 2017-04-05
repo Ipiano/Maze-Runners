@@ -1,4 +1,7 @@
 #include "basicrules.h"
+#include <iostream>
+
+using namespace std;
 
 MazeSettings BasicRules::getSettings(const maze<MapTile>& m)
 {
@@ -9,14 +12,15 @@ BasicPlayerData BasicRules::initPlayer(BasicPlayer* player, const maze<MapTile>&
 {
     if(_playerIds.find(player) != _playerIds.end())
     {
-        return BasicPlayerData{m.players[_playerIds[player]].x, m.players[_playerIds[player]].y, _playerIds[player]};
+        int id = _playerIds[player];
+        return BasicPlayerData{m.players[id].x, m.players[id].y, id};
     }
 
-    if(m.players.size() > playerCount+1)
+    if(m.players.size() > playerCount)
     {
-        playerCount++;
-        _playerIds[player] = playerCount;
-        return BasicPlayerData{m.players[_playerIds[player]].x, m.players[_playerIds[player]].y , playerCount};
+        int id;
+        _playerIds[player] = id = playerCount++;
+        return BasicPlayerData{m.players[id].x, m.players[id].y , id};
     }
 
     return BasicPlayerData{0,0, -1};

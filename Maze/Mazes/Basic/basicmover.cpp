@@ -21,6 +21,7 @@ void BasicMover::movePlayer(BasicPlayerData& playerData,
     else if(move.attemptedMove == PlayerMove::Move::MOVETO)
     {
         const MazePoint& target = move.destination;
+
         if(target.x == 1 && target.y == 0 && (tile & (unsigned char)MapTile::Direction::EAST))
         {
             out = point{out.x + target.x, out.y + target.y};

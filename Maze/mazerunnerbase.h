@@ -10,6 +10,7 @@
 template<class PlayerType, class PlayerDataType, class Tile>
 class MazeRunnerAccess
 {
+public:
     virtual maze<Tile>& getMaze() = 0;
     virtual std::unordered_map<PlayerType*, PlayerDataType>* getPlayerData() = 0;
 };

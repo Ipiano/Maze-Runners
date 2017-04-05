@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     BasicMover playerMove;
     SquarePartitioner part;
     BasicRules rules;
-    MazeRunner<BasicPlayer, BasicPlayerData, PlayerMove, MapTile, MazeSettings> m(&mazeGen, &part, &playerMove, &rules, true, true);
+    MazeRunner<BasicPlayer, BasicPlayerData, PlayerMove, MapTile, MazeSettings> m(&mazeGen, &part, &playerMove, &rules);
     PlayerLoader<BasicPlayer> g(&m);
 
     g.loadPlayers("./Players");
