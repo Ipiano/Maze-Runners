@@ -22,12 +22,12 @@ MapTile* SquarePartitioner::getMazeSection(unsigned int& width, unsigned int& he
     unsigned int y_start = target_loc.y-h2;
     unsigned int x_start = target_loc.x-w2;
 
-    for(int i=0, i_ = y_start; i<height; i++, i_++)
+    for(uint i=0, i_ = y_start; i<height; i++, i_++)
     {
         int offset = i_*mwidth + (target_loc.x < w2 ? 0 : x_start);
         initer = m.begin() + std::max(offset, 0);
 
-        for(int j=0, j_ = x_start; j<width; j++, j_++)
+        for(uint j=0, j_ = x_start; j<width; j++, j_++)
         {
             if(i_ >= 0 && i_ < mheight && j_ >= 0 && j_ < mwidth)
             {

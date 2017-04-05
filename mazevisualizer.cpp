@@ -68,23 +68,25 @@ void MazeVisualizer::_drawCell(const unsigned int& x, const unsigned int& y, con
     //cerr << "Total offset " << rowBytes*(y_+1) + (y_<_exH?(y_+1)*_buffW*3:_exH*_buffW*3) - _buffW*3 + skipBytes << endl;
 
     bool north = ((tile.exits & (unsigned char)MapTile::Direction::NORTH) == 0);
-    bool south = ((tile.exits & (unsigned char)MapTile::Direction::SOUTH) == 0);
-    bool east = ((tile.exits & (unsigned char)MapTile::Direction::EAST) == 0);
+//  bool south = ((tile.exits & (unsigned char)MapTile::Direction::SOUTH) == 0);
+//  bool east = ((tile.exits & (unsigned char)MapTile::Direction::EAST) == 0);
     bool west = ((tile.exits & (unsigned char)MapTile::Direction::WEST) == 0);
 
     //cerr << north << " : " << south << " : " << east << " : " << west << endl;
 
-    for(int i=0; i<thsH; i++)
+    for(uint i=0; i<thsH; i++)
     {
         unsigned char* iter = start - _buffW*i*3;
         //cerr << "\t" << _buffW*i*3 << endl;
-        for(int j=0; j<thsW; j++)
+        for(uint j=0; j<thsW; j++)
         {
             if((north && i < _wall) ||
                (west && j < _wall))
             {
                 //cerr << "\t\tWall" << endl;
-                *(iter++) = *(iter++) = *(iter++) = 0;
+                *(iter++) = 0;
+                *(iter++) = 0;
+                *(iter++) = 0;
             }
             else
             {
@@ -95,7 +97,6 @@ void MazeVisualizer::_drawCell(const unsigned int& x, const unsigned int& y, con
             }
         }
     }
-    
 }
 
 void MazeVisualizer::draw(const DrawingCanvas* display)
@@ -162,10 +163,12 @@ void MazeVisualizer::draw(const DrawingCanvas* display)
     for(auto p : *players)
     {
         //cout << "Draw player " << p.first << " : " << p.second << endl;
-        unsigned char* pcolor = p.first->playerColor();
+        unsigned char r = p.first->playerColor()[0]/3;
+        unsigned char g = p.first->playerColor()[1]/3;
+        unsigned char b = p.first->playerColor()[2]/3;
         point ploc = maze.players[p.second];
 
-        _addColor(ploc.x, ploc.y, color{pcolor[0]/3, pcolor[1]/3, pcolor[2]/3});
+        _addColor(ploc.x, ploc.y, color{r, g, b});
     }
 
     if(_buffer == nullptr) return;

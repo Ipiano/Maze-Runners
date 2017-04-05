@@ -57,4 +57,12 @@ public:
                             const uint& area_width, const uint& area_height,    //Size of local area
                             const uint& loc_x, const uint& loc_y);          //Location in local grid
 };
+
+extern "C" Player* createPlayer() {
+   return new JumperPlayer();
+}
+
+extern "C" void destroyPlayer(Player *p) {
+   delete p;
+}
 #endif

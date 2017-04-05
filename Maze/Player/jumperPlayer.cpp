@@ -70,7 +70,7 @@ bool JumperPlayer::nextToUnknown(const MazePoint& p)
 void JumperPlayer::bfsDead(const MazePoint& start)
 {
     //Don't mark already known dead or visited places'
-    if(visited[start.x][start.y] || dead[start.x][start.y] && !nextToUnknown(start)) return;
+    if(visited[start.x][start.y] || (dead[start.x][start.y] && !nextToUnknown(start))) return;
 
     //cerr << "BFS from " << start.x << ", " << start.y << endl;
     static vector<MazePoint> dirs;
@@ -102,15 +102,15 @@ PlayerMove JumperPlayer::move(const MapTile* surroundings,                //Cons
 
     //Copy curroundings into local map
     auto iter = surroundings;
-    for(int j=0, j_ = currLocation.y - loc_y; j < area_height; j++, j_++)
-        for(int i=0, i_ = currLocation.x - loc_x; i < area_width; i++, i_++)
+    for(uint j=0, j_ = currLocation.y - loc_y; j < area_height; j++, j_++)
+        for(uint i=0, i_ = currLocation.x - loc_x; i < area_width; i++, i_++)
         {
             explored[i_][j_] = *(iter++);
         }
 
     //Fill in new dead ends
-    for(int j=0, j_ = currLocation.y - loc_y; j < area_height; j++, j_++)
-        for(int i=0, i_ = currLocation.x - loc_x; i < area_width; i++, i_++)
+    for(int j=0, j_ = currLocation.y - loc_y; j < (int)area_height; j++, j_++)
+        for(int i=0, i_ = currLocation.x - loc_x; i < (int)area_width; i++, i_++)
         {
             bfsDead(MazePoint{i_, j_});
         }

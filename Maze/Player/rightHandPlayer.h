@@ -35,4 +35,11 @@ public:
                             const uint& loc_x, const uint& loc_y);          //Location in local grid
 };
 
+extern "C" Player* createPlayer() {
+   return new RightHandPlayer();
+}
+
+extern "C" void destroyPlayer(Player *p) {
+   delete p;
+}
 #endif // PLAYER_H

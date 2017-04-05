@@ -10,25 +10,29 @@ LINK = g++
 CFLAGS = -std=c++11 -Wall -O
 CXXFLAGS = $(CFLAGS)
 
-PLAYEROBJS = ./Player/randomPlayer.o ./Player/rightHandPlayer.o ./Player/sointerface.o \
-				./Player/jumperPlayer.o
+PLAYEROBJS = randomPlayer.o rightHandPlayer.o jumperPlayer.o
+
+PLAYERSOS = $(PLAYEROBJS:.o=.so)
+
 GAMEOBJS = ./Mazes/basicmover.o \
 			./Mazes/dfsgenerator.o ./Mazes/squarepartitioner.o main.o 
 
 # Math library
 LIBS = -lm -ldl
 
+VPATH = Player
+
 #-----------------------------------------------------------------------
 # Specific targets:
 
-all: game player.so
+all: game $(PLAYERSOS)
 
 %.o: %.cpp
-	$(LINK) -fPIC -c -Wall $^ -o $@
+	$(LINK) -fPIC -c $(CXXFLAGS) $^ -o $@
 
-player.so: $(PLAYEROBJS)
-	mkdir Players; $(LINK) -shared -Wl,-soname,./Players/libplayer.so \
-	-o ./Players/libplayer.so $(PLAYEROBJS) -lc
+%.so: %.o
+	mkdir -p Players
+	$(LINK) -shared -Wl,-soname,./Players/$@ -o ./Players/$@ $^ -lc
 
 game: $(GAMEOBJS)
 	$(LINK) -o $@ $(GAMEOBJS) $(LIBS)

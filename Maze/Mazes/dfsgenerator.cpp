@@ -17,7 +17,7 @@ maze DFSGenerator::generateMaze(unsigned int players)
 
     //Assign random uids to the maze tiles
     set<unsigned int> used;
-    for(int i=0; i<_w*_h; i++)
+    for(uint i=0; i<_w*_h; i++)
     {
         unsigned int id;
         do
@@ -52,7 +52,7 @@ maze DFSGenerator::generateMaze(unsigned int players)
     cerr << "Done!" << endl;
 
     maze out(_maze, _w, _h);
-    for(int i=0; i<players; i++)
+    for(uint i=0; i<players; i++)
         out.players.push_back(point{0, 0});
     out.exit = point{rand()%_w, rand()%_h};
 
