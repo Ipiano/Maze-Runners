@@ -8,7 +8,7 @@
 
 using namespace std;
 
-maze DFSGenerator::generateMaze(unsigned int players)
+maze<MapTile> DFSGenerator::generateMaze(unsigned int players)
 {
     cerr << "Generating Maze..." << endl;
     
@@ -51,7 +51,7 @@ maze DFSGenerator::generateMaze(unsigned int players)
     }
     cerr << "Done!" << endl;
 
-    maze out(_maze, _w, _h);
+    maze<MapTile> out(_maze, _w, _h, false);
     for(int i=0; i<players; i++)
         out.players.push_back(point{0, 0});
     out.exit = point{rand()%_w, rand()%_h};

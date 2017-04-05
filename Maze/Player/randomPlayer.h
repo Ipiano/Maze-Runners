@@ -6,7 +6,7 @@
 #include "../types.h"
 #include "../Interfaces/player.h"
 
-class RandomPlayer : public Player
+class RandomPlayer : public BasicPlayer
 {
     unsigned char _color[3] = {255, 0, 0};
 public:

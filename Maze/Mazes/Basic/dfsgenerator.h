@@ -1,9 +1,11 @@
 #ifndef _DFS_GEN_H
 #define _DFS_GEN_H
 
-#include "../Interfaces/mazegenerator.h"
+#include "../../Interfaces/mazegenerator.h"
+#include "../../types.h"
+#include "../../Interfaces/backend_types.h"
 
-class DFSGenerator : public MazeGenerator
+class DFSGenerator : public MazeGenerator<MapTile>
 {
     MapTile* _maze;
     unsigned int _w, _h;
@@ -14,7 +16,7 @@ class DFSGenerator : public MazeGenerator
 public:
     DFSGenerator(int width, int height) : _w(width), _h(height){}
 
-    maze generateMaze(unsigned int players);
+    maze<MapTile> generateMaze(unsigned int players);
 
     //Returns whether or not the maze wraps around on the edges
     bool isWrapped(){return false;}

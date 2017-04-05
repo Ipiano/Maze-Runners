@@ -4,21 +4,21 @@
 
 using namespace std;
 
-point BasicMover::movePlayer(const int& playerId,
+void BasicMover::movePlayer(BasicPlayerData& playerData,
                     const PlayerMove& move,
-                    maze& m)
+                    maze<MapTile>& m)
 {
-    point out = m.players[playerId];
+    point out = point{playerData.x, playerData.y};
     unsigned char tile = m.at(out).exits;
 
-    std::unordered_map<int, std::unordered_map<int, bool>>& visited = _visited[playerId];
+    std::unordered_map<int, std::unordered_map<int, bool>>& visited = _visited[playerData.id];
     visited[out.x][out.y] = true;
 
-    if(move.attemptedMove == Move::NOOP)
+    if(move.attemptedMove == PlayerMove::Move::NOOP)
     {
-        return out;
+        return;
     }
-    else if(move.attemptedMove == Move::MOVETO)
+    else if(move.attemptedMove == PlayerMove::Move::MOVETO)
     {
         const MazePoint& target = move.destination;
         if(target.x == 1 && target.y == 0 && (tile & (unsigned char)MapTile::Direction::EAST))
@@ -43,15 +43,16 @@ point BasicMover::movePlayer(const int& playerId,
         }
         else
         {
-            cout << "Player " << playerId << " tried to MOVETO to invalid location" << endl;
+            cout << "Player " << playerData.id << " tried to MOVETO to invalid location" << endl;
             cout << "Relative: " << target.x << ", " << target.y << endl;
             cout << "Absolute: " << out.x+target.x << ", " << out.y+target.y << endl;
         }
     }
     else
     {
-        cout << "Unsupported move by player " << playerId << " : " << (unsigned int)move.attemptedMove << endl;
+        cout << "Unsupported move by player " << playerData.id << " : " << (unsigned int)move.attemptedMove << endl;
     }
 
-    return out;
+    playerData.x = out.x;
+    playerData.y = out.y;
 }

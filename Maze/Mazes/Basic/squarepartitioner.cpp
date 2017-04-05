@@ -4,10 +4,13 @@
 using namespace std;
 
 MapTile* SquarePartitioner::getMazeSection(unsigned int& width, unsigned int& height,
-                            const unsigned int& player, point& relative_loc,
-                            maze& m, MapTile* reuse)
+                            BasicPlayerData& player, point& relative_loc,
+                            maze<MapTile>& m)
 {
-    point target_loc = m.players[player];
+    delete[] reuse;
+    reuse = nullptr;
+
+    point target_loc = point{player.x, player.y};
     if(reuse == nullptr)
     {
         width = height = 11;

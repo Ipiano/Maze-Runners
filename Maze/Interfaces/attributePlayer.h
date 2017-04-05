@@ -7,6 +7,6 @@ class AttributePlayer : public Player
 {
 public:
     virtual PlayerAttributes getAttributes(unsigned int points) = 0;
-}
+};
 
 #endif

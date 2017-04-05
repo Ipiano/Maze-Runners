@@ -132,7 +132,7 @@ PlayerMove JumperPlayer::move(const MapTile* surroundings,                //Cons
             MazePoint to = backtrace.top();
 
             teleported = true;
-            out.attemptedMove = Move::MOVETO;
+            out.attemptedMove = PlayerMove::Move::MOVETO;
             out.destination = to - currLocation;
 
             nextLocation = currLocation + out.destination;
@@ -146,7 +146,7 @@ PlayerMove JumperPlayer::move(const MapTile* surroundings,                //Cons
     if(moves.size() > 1)
         backtrace.push(currLocation);
     
-    out.attemptedMove = Move::MOVETO;
+    out.attemptedMove = PlayerMove::Move::MOVETO;
     out.destination = moves[0];
 
     teleported = false;

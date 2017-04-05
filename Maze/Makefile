@@ -12,8 +12,8 @@ CXXFLAGS = $(CFLAGS)
 
 PLAYEROBJS = ./Player/randomPlayer.o ./Player/rightHandPlayer.o ./Player/sointerface.o \
 				./Player/jumperPlayer.o
-GAMEOBJS = ./Mazes/basicmover.o \
-			./Mazes/dfsgenerator.o ./Mazes/squarepartitioner.o main.o 
+GAMEOBJS = ./Mazes/Basic/basicmover.o ./Mazes/Basic/basicrules.o \
+			./Mazes/Basic/dfsgenerator.o ./Mazes/Basic/squarepartitioner.o main.o 
 
 # Math library
 LIBS = -lm -ldl

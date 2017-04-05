@@ -8,23 +8,30 @@
 #include <stdexcept>
 #include <iostream>
 
+struct BasicPlayerData
+{
+    unsigned int x, y;
+    int id;
+};
+
 struct point
 {
-    unsigned x, y;
+    unsigned int x, y;
 
     bool operator ==(const point& other){return x == other.x && y == other.y;}
 };
 
+template<class Tile>
 class maze
 {
 public:
     class iterator
     {
         friend class maze;
-        friend std::ostream& operator<<(std::ostream& out, const maze::iterator& m);
-        MapTile* _curr;
+        friend std::ostream& operator<<(std::ostream& out, const typename maze<Tile>::iterator& m);
+        Tile* _curr;
         
-        iterator(MapTile* ptr) : _curr(ptr){};
+        iterator(Tile* ptr) : _curr(ptr){};
         public:
             bool operator == (const iterator& other) {return _curr == other._curr;}
             bool operator != (const iterator& other) {return _curr != other._curr;}
@@ -41,24 +48,26 @@ public:
             iterator& operator +=(unsigned int n){_curr += n; return *this;}
             iterator& operator -=(unsigned int n){_curr -= n; return *this;}
 
-            MapTile& operator*(){return *_curr;}
-            MapTile* operator->(){return _curr;}
+            Tile& operator*(){return *_curr;}
+            Tile* operator->(){return _curr;}
     };
 
 private:
-    MapTile* _maze = nullptr;
+    Tile* _maze = nullptr;
     unsigned int _w, _h;
+    bool _wrapped;
 
 public:
     std::vector<point> players;
     point exit;
 
     maze(){}
-    maze(MapTile* data, unsigned int width, unsigned int height) : _maze(data), _w(width), _h(height){}
+    maze(Tile* data, unsigned int width, unsigned int height, bool wrapped) : _maze(data), _w(width), _h(height), _wrapped(wrapped){}
     unsigned int width() const {return _w;}
     unsigned int height() const {return _h;}
+    bool wrapped() const {return _wrapped;}
 
-    MapTile& at(const point& loc)
+    Tile& at(const point& loc)
     {
         if(loc.x < 0 || loc.x >= _w || loc.y < 0 || loc.y >= _h)
             throw std::out_of_range("Attempted to access " + std::to_string(loc.x) + ", " + std::to_string(loc.y) + " in maze size " +
@@ -75,7 +84,8 @@ public:
     void destroy() {delete[] _maze; _maze=nullptr;}
 };
 
-inline std::ostream& operator<<(std::ostream& out, const maze::iterator& m)
+template<class T>
+inline std::ostream& operator<<(std::ostream& out, const typename maze<T>::iterator& m)
 {
     return out << m._curr;
 }

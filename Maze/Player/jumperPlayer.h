@@ -9,7 +9,7 @@
 #include "../types.h"
 #include "../Interfaces/player.h"
 
-class JumperPlayer : public Player
+class JumperPlayer : public BasicPlayer
 {
     unsigned char _color[3] = {255, 0, 255};
 

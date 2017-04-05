@@ -6,7 +6,7 @@
 #include "../types.h"
 #include "../Interfaces/player.h"
 
-class RightHandPlayer : public Player
+class RightHandPlayer : public BasicPlayer
 {
     unsigned char _currDir = 1;
     unsigned char _color[3] = {0, 255, 255};

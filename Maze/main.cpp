@@ -1,9 +1,10 @@
 #include <iostream>
 
 #include "playerloader.h"
-#include "Mazes/dfsgenerator.h"
-#include "Mazes/basicmover.h"
-#include "Mazes/squarepartitioner.h"
+#include "Mazes/Basic/dfsgenerator.h"
+#include "Mazes/Basic/basicmover.h"
+#include "Mazes/Basic/squarepartitioner.h"
+#include "Mazes/Basic/basicrules.h"
 #include "mazerunner.h"
 
 using namespace std;
@@ -13,8 +14,9 @@ int main(int argc, char *argv[])
     DFSGenerator mazeGen(400, 400);
     BasicMover playerMove;
     SquarePartitioner part;
-    MazeRunner<Player> m(&mazeGen, &part, &playerMove, true, true);
-    PlayerLoader<Player> g(&m);
+    BasicRules rules;
+    MazeRunner<BasicPlayer, BasicPlayerData, PlayerMove, MapTile, MazeSettings> m(&mazeGen, &part, &playerMove, &rules, true, true);
+    PlayerLoader<BasicPlayer> g(&m);
 
     g.loadPlayers("./Players");
 
