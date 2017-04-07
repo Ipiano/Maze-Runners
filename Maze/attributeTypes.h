@@ -48,29 +48,29 @@ struct AdvancedPlayerMove
 
     Move attemptedMove;     //One of the enum Move types
     MazePoint destination;  //Used for MoveTo. Location must be one step away, or previously visited
-    MapTile::Direction dir; //Used for wallbreak and wall phase
+    AdvancedMapTile::Direction dir; //Used for wallbreak and wall phase
 
-    //Convenience constructor for converting maptile directions
+    //Convenience constructor for converting AdvancedMapTile directions
     //to moves
-    PlayerMove(MapTile::Direction _dir = MapTile::Direction::NONE)
+    AdvancedPlayerMove(AdvancedMapTile::Direction _dir = AdvancedMapTile::Direction::NONE)
     {
         switch(_dir)
         {
             default:
-            case MapTile::Direction::NONE: attemptedMove = Move::NOOP; break;
-            case MapTile::Direction::NORTH: 
+            case AdvancedMapTile::Direction::NONE: attemptedMove = Move::NOOP; break;
+            case AdvancedMapTile::Direction::NORTH: 
                 attemptedMove = Move::MOVETO; 
                 destination = MazePoint{0, -1};
                 break;
-            case MapTile::Direction::SOUTH: 
+            case AdvancedMapTile::Direction::SOUTH: 
                 attemptedMove = Move::MOVETO; 
                 destination = MazePoint{0, 1};
                 break;
-            case MapTile::Direction::EAST: 
+            case AdvancedMapTile::Direction::EAST: 
                 attemptedMove = Move::MOVETO; 
                 destination = MazePoint{1, 0};
                 break;
-            case MapTile::Direction::WEST: 
+            case AdvancedMapTile::Direction::WEST: 
                 attemptedMove = Move::MOVETO; 
                 destination = MazePoint{-1, 0};
                 break;

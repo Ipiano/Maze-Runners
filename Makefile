@@ -7,7 +7,9 @@
 LINK = g++
 
 MAZEDIR = ./Maze
-MAZESDIR = $(MAZEDIR)/Mazes/Basic
+MAZESDIR = $(MAZEDIR)/Mazes
+BASICMAZES = $(MAZESDIR)/Basic
+ADVANCEDMAZES = $(MAZESDIR)/Advanced
 PLAYERDIR = $(MAZEDIR)/Player
 
 ALGODIR = ./AnimAlgoLib
@@ -18,8 +20,10 @@ WIDGDIR = $(IODIR)/Widgets
 LAYDIR = $(WIDGDIR)/Layouts
 GLUTDIR = $(DRAWDIR)/GlutInterfaces
 
-GAMEOBJS = $(MAZESDIR)/basicmover.o $(MAZESDIR)/dfsgenerator.o \
-		   $(MAZESDIR)/squarepartitioner.o $(MAZESDIR)/basicrules.o
+GAMEOBJS = $(BASICMAZES)/basicmover.o $(BASICMAZES)/dfsgenerator.o \
+		   $(BASICMAZES)/squarepartitioner.o $(BASICMAZES)/basicrules.o \
+		   $(ADVANCEDMAZES)/advancedmover.o $(ADVANCEDMAZES)/advancedgenerator.o \
+		   $(ADVANCEDMAZES)/advancedrules.o $(ADVANCEDMAZES)/advancedpartitioner.o
 ANIMOBJS = animatedmaze.o main.o
 
 # Turn on optimization and warnings, use c++11:

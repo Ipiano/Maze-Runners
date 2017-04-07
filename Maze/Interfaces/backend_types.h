@@ -2,6 +2,7 @@
 #define _BACKEND_TYPES_H
 
 #include "../types.h"
+#include "../attributeTypes.h"
 #include <vector>
 #include <string>
 #include <exception>
@@ -12,6 +13,22 @@ struct BasicPlayerData
 {
     unsigned int x, y;
     int id;
+};
+
+struct AdvancedPlayerData
+{
+    unsigned int x, y;
+    int id;
+
+    int ticksPerTurn;
+    int mapVisionDist;
+    int playerVisionDist;
+    int ticksLeftForCurrentMove;
+    int wallBreaksLeft;
+    int wallPhaseLeft;
+    int luckLeft;
+    int willLeft;
+    AdvancedPlayerMove moveInProgress;
 };
 
 struct point

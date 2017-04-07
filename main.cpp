@@ -5,11 +5,11 @@
 #include "StaticLayout.h"
 #include "ScreenHandler.h"
 
-#include "Maze/Mazes/Basic/basicmover.h"
-#include "Maze/Mazes/Basic/dfsgenerator.h"
+#include "Maze/Mazes/Advanced/advancedmover.h"
+#include "Maze/Mazes/Advanced/advancedgenerator.h"
 #include "Maze/mazerunner.h"
-#include "Maze/Mazes/Basic/squarepartitioner.h"
-#include "Maze/Mazes/Basic/basicrules.h"
+#include "Maze/Mazes/Advanced/advancedpartitioner.h"
+#include "Maze/Mazes/Advanced/advancedrules.h"
 
 #include "mazevisualizer.h"
 #include "animatedmaze.h"
@@ -35,16 +35,16 @@ int main(int argc, char** argv)
     canvas.init(argc, argv, "Maze", 520, 520);
     input.setAsActiveHandler();
 
-    DFSGenerator mazeGen(width, height);
-    BasicMover playerMove;
-    BasicRules rules;
-    SquarePartitioner part;
-    MazeRunner<BasicPlayer, BasicPlayerData, PlayerMove, MapTile, MazeSettings> m(&mazeGen, &part, &playerMove, &rules, seed);
-    PlayerLoader<BasicPlayer> g(&m);
+    AdvancedGenerator mazeGen(width, height);
+    AdvancedMover playerMove;
+    AdvancedPartitioner part;
+    AdvancedRules rules;
+    MazeRunner<AttributePlayer, AdvancedPlayerData, AdvancedPlayerMove, AdvancedMapTile, MazeSettings> m(&mazeGen, &part, &playerMove, &rules);
+    PlayerLoader<AttributePlayer> g(&m);
 
     g.loadPlayers("./Players");
 
-    MazeVisualizer<BasicPlayer, BasicPlayerData, MapTile> visual(&m);
+    MazeVisualizer<AttributePlayer, AdvancedPlayerData, AdvancedMapTile> visual(&m);
     AnimatedMaze animator(&m);
     animator.reset();
 

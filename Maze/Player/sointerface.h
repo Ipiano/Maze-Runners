@@ -1,11 +1,10 @@
 #ifndef SOINTERFACE_H
 #define SOINTERFACE_H
 
-#include "../Interfaces/player.h"
-#include "../types.h"
+#include "../Interfaces/attributePlayer.h"
 
-extern "C" Player<PlayerMove, MapTile>* createPlayer();
+extern "C" AttributePlayer* createPlayer();
 
-extern "C" void destroyPlayer(Player<PlayerMove, MapTile>* p);
+extern "C" void destroyPlayer(AttributePlayer* p);
 
 #endif // SOINTERFACE_H

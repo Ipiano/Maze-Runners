@@ -12,8 +12,11 @@ CXXFLAGS = $(CFLAGS)
 
 PLAYEROBJS = ./Player/randomPlayer.o ./Player/rightHandPlayer.o ./Player/sointerface.o \
 				./Player/jumperPlayer.o
-GAMEOBJS = ./Mazes/Basic/basicmover.o ./Mazes/Basic/basicrules.o \
-			./Mazes/Basic/dfsgenerator.o ./Mazes/Basic/squarepartitioner.o main.o 
+BASICGAMEOBJS = ./Mazes/Basic/basicmover.o ./Mazes/Basic/basicrules.o \
+			./Mazes/Basic/dfsgenerator.o ./Mazes/Basic/squarepartitioner.o
+
+ADVANCEDGAMEOBJS = ./Mazes/Advanced/advancedmover.o ./Mazes/Advanced/advancedrules.o \
+			./Mazes/Advanced/advancedgenerator.o ./Mazes/Advanced/advancedpartitioner.o
 
 # Math library
 LIBS = -lm -ldl
@@ -30,8 +33,8 @@ player.so: $(PLAYEROBJS)
 	mkdir Players; $(LINK) -shared -Wl,-soname,./Players/libplayer.so \
 	-o ./Players/libplayer.so $(PLAYEROBJS) -lc
 
-game: $(GAMEOBJS)
-	$(LINK) -o $@ $(GAMEOBJS) $(LIBS)
+game: $(BASICGAMEOBJS) $(ADVANCEDGAMEOBJS) main.o
+	$(LINK) -o $@ $(GAMEOBJS) $(ADVANCEDGAMEOBJS) main.o $(LIBS)
 
 debug: CXXFLAGS += -g
 debug: all

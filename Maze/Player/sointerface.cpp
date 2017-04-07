@@ -1,13 +1,12 @@
 #include "sointerface.h"
-#include "jumperPlayer.h"
-#include "../types.h"
+#include "randomPlayer.h"
 
-Player<PlayerMove, MapTile>* createPlayer()
+AttributePlayer* createPlayer()
 {
-    return new JumperPlayer();
+    return new AdvRandomPlayer();
 }
 
-void destroyPlayer(Player<PlayerMove, MapTile>* p)
+void destroyPlayer(AttributePlayer* p)
 {
     delete p;
 }

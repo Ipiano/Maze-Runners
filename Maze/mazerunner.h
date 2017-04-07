@@ -112,7 +112,6 @@ bool RUNNER_TYPE::tickGame()
 
     for(auto& p : _players)
     {
-        std::cout << p.first << std::endl;
         if(!_rules->playerGetsTurn(p.second, _m) || _rules->playerIsDone(p.second, _m)) continue;
 
         _move->movePlayer(p.second, _moves[p.first], _m);

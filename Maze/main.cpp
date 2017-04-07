@@ -1,22 +1,22 @@
 #include <iostream>
 
 #include "playerloader.h"
-#include "Mazes/Basic/dfsgenerator.h"
-#include "Mazes/Basic/basicmover.h"
-#include "Mazes/Basic/squarepartitioner.h"
-#include "Mazes/Basic/basicrules.h"
+#include "Mazes/Advanced/advancedgenerator.h"
+#include "Mazes/Advanced/advancedmover.h"
+#include "Mazes/Advanced/advancedpartitioner.h"
+#include "Mazes/Advanced/advancedrules.h"
 #include "mazerunner.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-    DFSGenerator mazeGen(400, 400);
-    BasicMover playerMove;
-    SquarePartitioner part;
-    BasicRules rules;
-    MazeRunner<BasicPlayer, BasicPlayerData, PlayerMove, MapTile, MazeSettings> m(&mazeGen, &part, &playerMove, &rules);
-    PlayerLoader<BasicPlayer> g(&m);
+    AdvancedGenerator mazeGen(400, 400);
+    AdvancedMover playerMove;
+    AdvancedPartitioner part;
+    AdvancedRules rules;
+    MazeRunner<AttributePlayer, AdvancedPlayerData, AdvancedPlayerMove, AdvancedMapTile, MazeSettings> m(&mazeGen, &part, &playerMove, &rules);
+    PlayerLoader<AttributePlayer> g(&m);
 
     g.loadPlayers("./Players");
 
