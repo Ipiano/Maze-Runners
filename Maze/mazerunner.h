@@ -11,33 +11,41 @@
 #include "./Interfaces/backend_types.h"
 #include "./Interfaces/mazegenerator.h"
 #include "./Interfaces/mazepartitioner.h"
+#include "./Interfaces/ruleenforcer.h"
 #include "./Interfaces/playermover.h"
 #include "mazerunnerbase.h"
+#include "playergame.h"
+
+#define RUNNER_TEMPLATE template<class PlayerType, class PlayerDataType, class PlayerMoveType, class Tile, class MazeSettingsType>
+#define RUNNER_TYPE MazeRunner<PlayerType, PlayerDataType, PlayerMoveType, Tile, MazeSettingsType>
 
 //Facilitates creating a maze and letting players
 //take turns moving through it until end conditions are met
 //mazes are defined with 0, 0 in the northwest corner
-template<class PlayerType>
-class MazeRunner : public MazeRunnerBase
+RUNNER_TEMPLATE
+class MazeRunner : public MazeRunnerBase, public MazeRunnerAccess<PlayerType, PlayerDataType, Tile>, public PlayerGame<PlayerType>
 {
-    MazeGenerator* _gen;
-    MazePartitioner<PlayerType>* _part;
-    PlayerMover<PlayerType>* _move;
-    maze _m;
-    bool _tellD, _tellE;
+    MazeGenerator<Tile>* _gen;
+    MazePartitioner<PlayerDataType, Tile>* _part;
+    PlayerMover<PlayerDataType, PlayerMoveType, Tile>* _move;
+    RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* _rules;
+    
+    maze<Tile> _m;
     unsigned int _seed;
 
 protected:
     uint _turn_no;
-    std::unordered_map<Player*, unsigned int> _players;
-    std::unordered_map<Player*, PlayerMove> _moves;
+    std::unordered_map<PlayerType*, PlayerDataType> _players;
+    std::unordered_map<PlayerType*, PlayerMoveType> _moves;
 
 public:
-    MazeRunner(MazeGenerator* gen, MazePartitioner<PlayerType>* part, PlayerMover<PlayerType>* move, bool tellDims, bool tellExit, unsigned int seed = 0);
+    MazeRunner(MazeGenerator<Tile>* gen, MazePartitioner<PlayerDataType, Tile>* part, PlayerMover<PlayerDataType, PlayerMoveType, Tile>* move, 
+               RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* rules,
+               unsigned int seed = 0);
     ~MazeRunner();
 
-    maze& getMaze() { return _m; }
-    std::unordered_map<Player*, unsigned int>* getPlayerData(){return &_players;}
+    maze<Tile>& getMaze() { return _m; }
+    std::unordered_map<PlayerType*, PlayerDataType>* getPlayerData(){return &_players;}
 
     void addPlayer(PlayerType* p);
     void removePlayer(PlayerType* p);
@@ -53,62 +61,53 @@ public:
     void setup();
 };
 
-
-
-template<class PlayerType>
-MazeRunner<PlayerType>::MazeRunner(MazeGenerator* gen, MazePartitioner<PlayerType>* part, PlayerMover<PlayerType>* move, bool tellDims, bool tellExit, unsigned int seed) 
-: _gen(gen), _part(part), _move(move), _tellD(tellDims), _tellE(tellExit), _seed(seed)
+RUNNER_TEMPLATE
+RUNNER_TYPE::MazeRunner(MazeGenerator<Tile>* gen, MazePartitioner<PlayerDataType, Tile>* part, PlayerMover<PlayerDataType, PlayerMoveType, Tile>* move, 
+               RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* rules, unsigned int seed) 
+: _gen(gen), _part(part), _move(move), _rules(rules), _seed(seed)
 {
 
 }
 
-template<class PlayerType>
-MazeRunner<PlayerType>::~MazeRunner()
+RUNNER_TEMPLATE
+RUNNER_TYPE::~MazeRunner()
 {
     _m.destroy();
 }
 
-template<class PlayerType>
-void MazeRunner<PlayerType>::addPlayer(PlayerType* p)
+RUNNER_TEMPLATE
+void RUNNER_TYPE::addPlayer(PlayerType* p)
 {
-    _players[p] = _m.players.size();
+    _players[p] = _rules->initPlayer(p, _m);
 }
 
-template<class PlayerType>
-void MazeRunner<PlayerType>::removePlayer(PlayerType* p)
+RUNNER_TEMPLATE
+void RUNNER_TYPE::removePlayer(PlayerType* p)
 {
     _players.erase(p);
 }
 
-template<class PlayerType>
-bool MazeRunner<PlayerType>::tickGame()
+RUNNER_TEMPLATE
+bool RUNNER_TYPE::tickGame()
 {
-    //std::cout << "Tick maze" << std::endl;
     unsigned int w, h;
     point relative;
     bool moves = false;
-    for(auto p : _players)
+    for(auto& p : _players)
     {
-        //std::cout << "Tick player " << p.first << " : " << p.second << std::endl;
-        if(p.second >= _m.players.size())continue;
-        
-        point& ploc = _m.players[p.second];
-        if(ploc == _m.exit)
-        {
-            continue;
-        }
-
+        if(_rules->playerIsDone(p.second, _m)) continue;
         moves = true;
-        MapTile* area = _part->getMazeSection(w, h, p.second, relative, _m);
 
-        //std::cout << w << ", " << h << ", " << relative.x << ", " << relative.y << std::endl;
-        //std::cout << (int)area[relative.y * w + relative.x].exits << std::endl;
+        if(!_rules->playerGetsTurn(p.second, _m))
+        {
+            _moves[p.first] = _move->defaultMove();
+        }
+        else
+        {
+            Tile* area = _part->getMazeSection(w, h, p.second, relative, _m);
 
-        _moves[p.first] = p.first->move(area, w, h, relative.x, relative.y);
-
-        //std::cout << p.first << " moved " << (int)_moves[p.first] << std::endl;
-
-        delete[] area;
+            _moves[p.first] = p.first->move(area, w, h, relative.x, relative.y);
+        }
     }
 
     if(!moves)
@@ -116,20 +115,13 @@ bool MazeRunner<PlayerType>::tickGame()
         return false;
     }
 
-    //std::cout << "Moving players" << std::endl;
-    for(auto p : _players)
+    for(auto& p : _players)
     {
-        //std::cout << p.first << " : " << p.second << std::endl;
-        if(p.second >= _m.players.size()) continue;
+        if(_rules->playerIsDone(p.second, _m)) continue;
 
-        point& ploc = _m.players[p.second];
-        if(ploc == _m.exit)
-        {
-            continue;
-        }
-        ploc = _move->movePlayer(p.second, _moves[p.first], _m);
+        _move->movePlayer(p.second, _moves[p.first], _m);
 
-        if(ploc == _m.exit)
+        if(_rules->playerIsDone(p.second, _m))
             std::cout << "Player " << p.first->playerName() << " finished on turn " << _turn_no << std::endl;
     }
 
@@ -137,8 +129,8 @@ bool MazeRunner<PlayerType>::tickGame()
     return true;
 }
 
-template<class PlayerType>
-void MazeRunner<PlayerType>::setup()
+RUNNER_TEMPLATE
+void RUNNER_TYPE::setup()
 {
     _m.destroy();
 
@@ -151,21 +143,17 @@ void MazeRunner<PlayerType>::setup()
     _turn_no = 0;
     _m = _gen->generateMaze(_players.size());
 
-    MazeSettings set{_tellD?(int)_m.width():-1, _tellD?(int)_m.height():-1, 
-                     _gen->isWrapped(),
-                     _tellE?(int)_m.exit.x:-1, _tellE?(int)_m.exit.y:-1 };
+    MazeSettingsType set = _rules->getSettings(_m);
 
-    int i=0;
     for(auto& p : _players)
     {
         p.first->setMazeSettings(set);
-        p.second = i++;
-
-        _move -> registerPlayer(p.second, p.first);
-        _part -> registerPlayer(p.second, p.first);
+        p.second = _rules->initPlayer(p.first, _m);
     }
 }
 
+#undef RUNNER_TEMPLATE
+#undef RUNNER_TYPE
 
 #endif // MAZE_H
 

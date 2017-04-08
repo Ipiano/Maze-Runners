@@ -67,10 +67,16 @@ bool JumperPlayer::nextToUnknown(const MazePoint& p)
     return false;
 }
 
+bool JumperPlayer::isExit(const MazePoint& p)
+{
+    return explored[p.x][p.y].isExit;
+}
+
 void JumperPlayer::bfsDead(const MazePoint& start)
 {
     //Don't mark already known dead or visited places'
-    if(visited[start.x][start.y] || (dead[start.x][start.y] && !nextToUnknown(start))) return;
+    if(visited[start.x][start.y] || dead[start.x][start.y] ||
+        nextToUnknown(start) || isExit(start)) return;
 
     //cerr << "BFS from " << start.x << ", " << start.y << endl;
     static vector<MazePoint> dirs;
@@ -126,7 +132,7 @@ PlayerMove JumperPlayer::move(const MapTile* surroundings,                //Cons
             MazePoint to = backtrace.top();
 
             teleported = true;
-            out.attemptedMove = Move::MOVETO;
+            out.attemptedMove = PlayerMove::Move::MOVETO;
             out.destination = to - currLocation;
 
             nextLocation = currLocation + out.destination;
@@ -140,7 +146,7 @@ PlayerMove JumperPlayer::move(const MapTile* surroundings,                //Cons
     if(moves.size() > 1)
         backtrace.push(currLocation);
     
-    out.attemptedMove = Move::MOVETO;
+    out.attemptedMove = PlayerMove::Move::MOVETO;
     out.destination = moves[0];
 
     teleported = false;

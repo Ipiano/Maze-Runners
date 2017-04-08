@@ -6,6 +6,7 @@
 #include <vector>
 #include <utility>
 
+template<class Tile>
 class MazeGenerator
 {
 public:
@@ -14,7 +15,7 @@ public:
      *
      *  players - Number of players to find starts for
      */
-    virtual maze generateMaze(unsigned int players) = 0;
+    virtual maze<Tile> generateMaze(unsigned int players) = 0;
 
     //Returns whether or not the maze wraps around on the edges
     virtual bool isWrapped() = 0;  

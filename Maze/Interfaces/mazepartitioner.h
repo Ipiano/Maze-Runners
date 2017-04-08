@@ -4,19 +4,10 @@
 #include "../types.h"
 #include "backend_types.h"
 
-template<class PlayerType>
+template<class PlayerDataType, class Tile>
 class MazePartitioner
 {
 public:
-    /* 
-     * Registers a player so that the partitioner can set up to get sections
-     * of the map for them
-     *
-     * playerId - Number id used to identify the player during sectioning
-     * player - Pointer to player so the partitioner can get any extra info needed
-     */
-    virtual void registerPlayer(const int& playerId, const PlayerType* player){};
-
     /*
      *  Returns an array which contains a subsection of a maze
      *
@@ -29,9 +20,9 @@ public:
      *  reuse - Pointer to already allocated array. If this is not nullptr, it must be at least
      *      as big as width*height. If this is nullptr, then function will allocate a new array of size width*height
      */
-    virtual MapTile* getMazeSection(unsigned int& width, unsigned int& height,
-                            const unsigned int& player, point& relative_loc,
-                            maze& m, MapTile* reuse = nullptr) = 0;
+    virtual Tile* getMazeSection(unsigned int& width, unsigned int& height,
+                            PlayerDataType& playerData, point& relative_loc,
+                            maze<Tile>& m) = 0;
 };
 
 #endif

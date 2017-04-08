@@ -1,19 +1,22 @@
-#include "squarepartitioner.h"
+#include "advancedpartitioner.h"
 #include <exception>
 
 using namespace std;
 
-MapTile* SquarePartitioner::getMazeSection(unsigned int& width, unsigned int& height,
-                            const unsigned int& player, point& relative_loc,
-                            maze& m, MapTile* reuse)
+AdvancedMapTile* AdvancedPartitioner::getMazeSection(unsigned int& width, unsigned int& height,
+                            AdvancedPlayerData& player, point& relative_loc,
+                            maze<AdvancedMapTile>& m)
 {
-    point target_loc = m.players[player];
+    delete[] reuse;
+    reuse = nullptr;
+
+    point target_loc = point{player.x, player.y};
     if(reuse == nullptr)
     {
         width = height = 11;
-        reuse = new MapTile[width*height];
+        reuse = new AdvancedMapTile[width*height];
     }
-    MapTile* outiter = reuse;
+    AdvancedMapTile* outiter = reuse;
     auto initer = m.begin();
     unsigned int mwidth = m.width();
     unsigned int mheight = m.height();
@@ -22,12 +25,12 @@ MapTile* SquarePartitioner::getMazeSection(unsigned int& width, unsigned int& he
     unsigned int y_start = target_loc.y-h2;
     unsigned int x_start = target_loc.x-w2;
 
-    for(uint i=0, i_ = y_start; i<height; i++, i_++)
+    for(int i=0, i_ = y_start; i<height; i++, i_++)
     {
         int offset = i_*mwidth + (target_loc.x < w2 ? 0 : x_start);
         initer = m.begin() + std::max(offset, 0);
 
-        for(uint j=0, j_ = x_start; j<width; j++, j_++)
+        for(int j=0, j_ = x_start; j<width; j++, j_++)
         {
             if(i_ >= 0 && i_ < mheight && j_ >= 0 && j_ < mwidth)
             {
@@ -36,7 +39,7 @@ MapTile* SquarePartitioner::getMazeSection(unsigned int& width, unsigned int& he
             }
             else
             {
-                *outiter = MapTile();
+                *outiter = AdvancedMapTile();
                 outiter->exits = 0;
             }
 

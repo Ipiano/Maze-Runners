@@ -7,12 +7,17 @@
 
 #include <unordered_map>
 
+template<class PlayerType, class PlayerDataType, class Tile>
+class MazeRunnerAccess
+{
+public:
+    virtual maze<Tile>& getMaze() = 0;
+    virtual std::unordered_map<PlayerType*, PlayerDataType>* getPlayerData() = 0;
+};
+
 class MazeRunnerBase
 {
 public:
-    virtual maze& getMaze() = 0;
-    virtual std::unordered_map<Player*, unsigned int>* getPlayerData() = 0;
-
     //Gets moves from all players and then
     //executes the moves
     //Returns false when no more moves should happen

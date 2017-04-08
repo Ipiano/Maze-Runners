@@ -9,7 +9,7 @@
 #include <iostream>
 #include <dlfcn.h>
 
-#include "mazerunner.h"
+#include "playergame.h"
 #include "./Interfaces/player.h"
 
 template<class PlayerType>
@@ -28,9 +28,9 @@ class PlayerLoader
     };
 
     std::vector<playerHandle> _players;
-    MazeRunner<PlayerType>* _maze;
+    PlayerGame<PlayerType>* _game;
 public:
-    PlayerLoader(MazeRunner<PlayerType>* maze);
+    PlayerLoader(PlayerGame<PlayerType>* game);
     ~PlayerLoader();
 
     void unloadPlayers();
@@ -39,7 +39,7 @@ public:
 
 
 template<class PlayerType>
-PlayerLoader<PlayerType>::PlayerLoader(MazeRunner<PlayerType> *maze) : _maze(maze)
+PlayerLoader<PlayerType>::PlayerLoader(PlayerGame<PlayerType> *game) : _game(game)
 {
 
 }
@@ -55,7 +55,7 @@ void PlayerLoader<PlayerType>::unloadPlayers()
 {
     for(playerHandle& p : _players)
     {
-        _maze->removePlayer(p.ptr);
+        _game->removePlayer(p.ptr);
         p.destroyFunc(p.ptr);
         dlclose(p.library);
     }
@@ -120,7 +120,7 @@ void PlayerLoader<PlayerType>::loadPlayers(std::string dir)
             }
             else
             {
-                _maze->addPlayer(newPlayer.ptr);
+                _game->addPlayer(newPlayer.ptr);
                 std::cout << "Added player " << newPlayer.ptr->playerName() << std::endl;
                 _players.push_back(newPlayer);
             }
