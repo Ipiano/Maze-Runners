@@ -25,6 +25,22 @@ struct MapTile
     unsigned int uid;
     bool isExit = false;
     unsigned char exits; //Each of last 4 bytes corresponds to valid exit direction
+
+    bool operator !=(const MapTile& o)
+    {
+        return o.exits != exits;
+    }
+
+    bool getColor(unsigned char*& c)
+    {
+        if(isExit)
+        {
+            c[0] = c[2] = 100;
+            c[1] = 255;
+            return true;
+        }
+        return false;
+    }
 };
 struct PlayerMove
 {

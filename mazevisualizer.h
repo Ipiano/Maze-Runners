@@ -28,6 +28,8 @@ class MazeVisualizer : public Widget
     unsigned int _exW, _exH;
     unsigned int _wall;
     std::unordered_map<unsigned int, std::unordered_map<unsigned int, color>> _paths;
+    std::unordered_map<PlayerType*, MazePoint> _playerLocations;
+    std::unordered_map<PlayerType*, Tile> _playerTiles;
 
     void _drawCell(const unsigned int& x, const unsigned int& y, const Tile& tile);
     void _drawCell(const unsigned int& x, const unsigned int& y, const Tile& tile, const color& rgb);
@@ -78,10 +80,12 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::_addColor(const unsigned 
 }
 
 template<class PlayerType, class PlayerDataType, class Tile>
-typename MazeVisualizer<PlayerType, PlayerDataType, Tile>::color MazeVisualizer<PlayerType, PlayerDataType, Tile>::_getColor(const unsigned int& x, const unsigned int& y)
+typename MazeVisualizer<PlayerType, PlayerDataType, Tile>::color MazeVisualizer<PlayerType, PlayerDataType, Tile>
+::_getColor(const unsigned int& x, const unsigned int& y)
 {
-    point ex = _maze->getMaze().exit;
-    if(x == ex.x && y == ex.y) return color{102, 255, 102};
+    static unsigned char c[3];
+    if(_maze->getMaze().at(x, y).getColor(c))
+        return color{c[0], c[1], c[2]};
 
     auto xit = _paths.find(x);
     if(xit != _paths.end())
@@ -174,6 +178,33 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::draw(const DrawingCanvas*
         return;
     }
 
+    bool redrewMaze = false;
+    bool anyPlayerMoved = false;
+
+
+    //Check if any player didn't move, and the tile they were on changed
+    //Then we need to redraw the whole maze
+    std::unordered_map<PlayerType*, PlayerDataType>* players = _maze->getPlayerData();
+    for(const auto& p : *players)
+    {
+        auto& pLoc = _playerLocations[p.first];
+        auto& pTile = _playerTiles[p.first];
+        auto mTile = maze.at(p.second.x, p.second.y);
+        if(pLoc.x != p.second.x || pLoc.y != p.second.y)
+        {
+            pLoc = MazePoint{p.second.x, p.second.y};
+        }
+        else if(pTile != mTile)
+        {
+            if(_buffer)
+            {
+                delete[] _buffer;
+                _buffer = nullptr;
+            }
+        }
+        pTile = mTile;
+    }
+
     if(_buffer == nullptr)
     {
         //cerr << "Maze is " << _mwidth << " x " << _mheight << endl;
@@ -215,8 +246,7 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::draw(const DrawingCanvas*
         //cerr << "Maze drawn" << endl;
     }
 
-    std::unordered_map<PlayerType*, PlayerDataType>* players = _maze->getPlayerData();
-        //Redraw places players were previously
+    //Redraw places players were previously
     for(auto p : *players)
     {
         //cout << "Draw player " << p.first << " : " << p.second << endl;
@@ -260,8 +290,11 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::draw(const DrawingCanvas*
     //Draw exit
     _drawCell(maze.exit.x, maze.exit.y, maze.at(maze.exit));
 
+
     if(_buffer != nullptr)
+    {
         display->drawBitmap(_buffW, _buffH, _loc.x, _loc.y, _buffer);
+    }
 }
 
 template<class PlayerType, class PlayerDataType, class Tile>

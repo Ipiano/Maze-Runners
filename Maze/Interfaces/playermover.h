@@ -9,6 +9,8 @@ template<class PlayerDataType, class PlayerMoveType, class Tile>
 class PlayerMover
 {
 public:
+    virtual PlayerMoveType defaultMove() = 0;
+
     /*
      * Returns the location a player will be at after attempting to make a move
      *

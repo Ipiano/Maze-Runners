@@ -28,6 +28,7 @@ struct AdvancedPlayerData
     int wallPhaseLeft;
     int luckLeft;
     int willLeft;
+    int stickyBombs;
     AdvancedPlayerMove moveInProgress;
 };
 
@@ -84,12 +85,17 @@ public:
     unsigned int height() const {return _h;}
     bool wrapped() const {return _wrapped;}
 
+    Tile& at(const unsigned int& x, const unsigned int& y)
+    {
+        if(x < 0 || x >= _w ||  y < 0 ||  y >= _h)
+            throw std::out_of_range("Attempted to access " + std::to_string(x) + ", " + std::to_string(y) + " in maze size " +
+            std::to_string(_w) + ", " + std::to_string(_h));
+        return *(_maze + _w*y + x);
+    }
+
     Tile& at(const point& loc)
     {
-        if(loc.x < 0 || loc.x >= _w || loc.y < 0 || loc.y >= _h)
-            throw std::out_of_range("Attempted to access " + std::to_string(loc.x) + ", " + std::to_string(loc.y) + " in maze size " +
-            std::to_string(_w) + ", " + std::to_string(_h));
-        return *(_maze + _w*loc.y + loc.x);
+        return at(loc.x, loc.y);
     }
 
     iterator begin() {return iterator(_maze);}

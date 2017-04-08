@@ -11,7 +11,30 @@
 class AdvancedMover : public PlayerMover<AdvancedPlayerData, AdvancedPlayerMove, AdvancedMapTile>
 {
     std::unordered_map<int, std::unordered_map<int, std::unordered_map<int, bool>>> _visited; //Map player to x to y to visited or not
+
+    void performPlayerPendingMove(AdvancedPlayerData& playerData,
+                                  maze<AdvancedMapTile>& m);
+
+    void setupNextPlayerMove(AdvancedPlayerData& playerData,
+                              const AdvancedPlayerMove& move,
+                              maze<AdvancedMapTile>& m);
+
+    bool isValidMove(AdvancedPlayerData& playerData, 
+                     const AdvancedPlayerMove& move,
+                     maze<AdvancedMapTile>& m);
+
+    int moveLength(AdvancedPlayerData& playerData, 
+                    const AdvancedPlayerMove& move,
+                    maze<AdvancedMapTile>& m);
+
+    MazePoint closestPointToExit(MazePoint current, maze<AdvancedMapTile>& m);
+
 public:
+    virtual AdvancedPlayerMove defaultMove()
+    {
+        return AdvancedPlayerMove(AdvancedMapTile::Direction::NONE);
+    }
+
     void movePlayer(AdvancedPlayerData& playerData,
                      const AdvancedPlayerMove& move,
                      maze<AdvancedMapTile>& m);

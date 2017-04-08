@@ -10,7 +10,7 @@
 
 class RandomPlayer : public BasicPlayer
 {
-    unsigned char _color[3] = {255, 0, 0};
+    unsigned char _color[3] = {0, 255, 0};
 public:
     RandomPlayer();
     virtual ~RandomPlayer();
@@ -44,14 +44,14 @@ public:
 
     virtual PlayerAttributes getAttributes(unsigned int points)
     {
-        return PlayerAttributes{0,0,0,0,0,0,0};
+        return PlayerAttributes{0,0,0,0,0,0,0,0};
     }
 
     //Sets up the player to run a specific maze type
     virtual void setMazeSettings(const MazeSettings& settings){}
 
     //Return a string to be the player's name
-    virtual std::string playerName(){return "Random";}
+    virtual std::string playerName(){return "Random Red";}
 
     //Return an unsigned char[3] RGB color array
     virtual unsigned char* playerColor(){return _color;}

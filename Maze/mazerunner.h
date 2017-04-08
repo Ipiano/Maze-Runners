@@ -98,11 +98,16 @@ bool RUNNER_TYPE::tickGame()
         if(_rules->playerIsDone(p.second, _m)) continue;
         moves = true;
 
-        if(!_rules->playerGetsTurn(p.second, _m)) continue;
+        if(!_rules->playerGetsTurn(p.second, _m))
+        {
+            _moves[p.first] = _move->defaultMove();
+        }
+        else
+        {
+            Tile* area = _part->getMazeSection(w, h, p.second, relative, _m);
 
-        Tile* area = _part->getMazeSection(w, h, p.second, relative, _m);
-
-        _moves[p.first] = p.first->move(area, w, h, relative.x, relative.y);
+            _moves[p.first] = p.first->move(area, w, h, relative.x, relative.y);
+        }
     }
 
     if(!moves)
@@ -112,7 +117,7 @@ bool RUNNER_TYPE::tickGame()
 
     for(auto& p : _players)
     {
-        if(!_rules->playerGetsTurn(p.second, _m) || _rules->playerIsDone(p.second, _m)) continue;
+        if(_rules->playerIsDone(p.second, _m)) continue;
 
         _move->movePlayer(p.second, _moves[p.first], _m);
 

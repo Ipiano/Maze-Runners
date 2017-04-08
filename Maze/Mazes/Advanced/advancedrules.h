@@ -13,7 +13,9 @@ class AdvancedRules : public RuleEnforcer<AttributePlayer, AdvancedPlayerData, A
     std::unordered_map<AttributePlayer*, unsigned int> _playerIds;
     int playerCount = 0;
 
+    void fillPlayerDataFromAttributes(PlayerAttributes attrib, AdvancedPlayerData& data);
 public:
+
     MazeSettings getSettings(const maze<AdvancedMapTile>& m);
     AdvancedPlayerData initPlayer(AttributePlayer* player, const maze<AdvancedMapTile>& m);
     bool playerGetsTurn(AdvancedPlayerData playerData, const maze<AdvancedMapTile>& m);

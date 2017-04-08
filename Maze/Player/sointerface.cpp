@@ -1,9 +1,9 @@
 #include "sointerface.h"
-#include "randomPlayer.h"
+#include "rightHandPlayer.h"
 
 AttributePlayer* createPlayer()
 {
-    return new AdvRandomPlayer();
+    return new AdvRightHandPlayer();
 }
 
 void destroyPlayer(AttributePlayer* p)
