@@ -28,7 +28,7 @@ class MazeVisualizer : public Widget
     unsigned int _exW, _exH;
     unsigned int _wall;
     std::unordered_map<unsigned int, std::unordered_map<unsigned int, color>> _paths;
-    std::unordered_map<PlayerType*, MazePoint> _playerLocations;
+    std::unordered_map<PlayerType*, point> _playerLocations;
     std::unordered_map<PlayerType*, Tile> _playerTiles;
 
     void _drawCell(const unsigned int& x, const unsigned int& y, const Tile& tile);
@@ -178,10 +178,6 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::draw(const DrawingCanvas*
         return;
     }
 
-    bool redrewMaze = false;
-    bool anyPlayerMoved = false;
-
-
     //Check if any player didn't move, and the tile they were on changed
     //Then we need to redraw the whole maze
     std::unordered_map<PlayerType*, PlayerDataType>* players = _maze->getPlayerData();
@@ -192,7 +188,7 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::draw(const DrawingCanvas*
         auto mTile = maze.at(p.second.x, p.second.y);
         if(pLoc.x != p.second.x || pLoc.y != p.second.y)
         {
-            pLoc = MazePoint{p.second.x, p.second.y};
+            pLoc = point{p.second.x, p.second.y};
         }
         else if(pTile != mTile)
         {

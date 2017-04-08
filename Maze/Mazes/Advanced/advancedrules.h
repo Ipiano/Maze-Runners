@@ -22,4 +22,4 @@ public:
     bool playerIsDone(AdvancedPlayerData playerData, const maze<AdvancedMapTile>& m);
 };
 
-#endif;
+#endif

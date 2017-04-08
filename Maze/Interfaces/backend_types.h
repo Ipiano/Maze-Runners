@@ -11,7 +11,7 @@
 
 struct BasicPlayerData
 {
-    unsigned int x, y;
+    unsigned long long int x, y;
     int id;
 };
 
@@ -34,7 +34,7 @@ struct AdvancedPlayerData
 
 struct point
 {
-    unsigned int x, y;
+    unsigned long long int x, y;
 
     bool operator ==(const point& other){return x == other.x && y == other.y;}
 };
@@ -46,7 +46,10 @@ public:
     class iterator
     {
         friend class maze;
-        friend std::ostream& operator<<(std::ostream& out, const typename maze<Tile>::iterator& m);
+        friend std::ostream& operator<<(std::ostream& out, const typename maze<Tile>::iterator& m)
+        {
+            return out << m._curr;
+        }
         Tile* _curr;
         
         iterator(Tile* ptr) : _curr(ptr){};
@@ -106,11 +109,5 @@ public:
     bool valid() const {return _maze != nullptr;}
     void destroy() {delete[] _maze; _maze=nullptr;}
 };
-
-template<class T>
-inline std::ostream& operator<<(std::ostream& out, const typename maze<T>::iterator& m)
-{
-    return out << m._curr;
-}
 
 #endif

@@ -9,4 +9,4 @@ public:
     virtual void removePlayer(PlayerType* p) = 0;
 };
 
-#endif;
+#endif

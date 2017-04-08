@@ -7,7 +7,7 @@ typedef unsigned int uint;
 
 struct MazePoint
 {
-    int x, y;
+    long long int x, y;
 };
 
 struct MapTile
@@ -83,13 +83,13 @@ struct PlayerMove
 
 struct MazeSettings
 {
-    int map_width;
-    int map_height;       //May be -1, -1 for unknown size
+    uint map_width;
+    uint map_height;       //May be -1, -1 for unknown size
 
     bool map_wraps;        //Whether or not the map wraps around on the edges
 
-    int exit_x;
-    int exit_y;           //Maze exit relative to player start; -1, -1 for unknown
+    uint exit_x;
+    uint exit_y;           //Maze exit relative to player start; -1, -1 for unknown
 };
 
 

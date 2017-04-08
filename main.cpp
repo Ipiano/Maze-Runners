@@ -39,7 +39,8 @@ int main(int argc, char** argv)
     AdvancedMover playerMove;
     AdvancedPartitioner part;
     AdvancedRules rules;
-    MazeRunner<AttributePlayer, AdvancedPlayerData, AdvancedPlayerMove, AdvancedMapTile, MazeSettings> m(&mazeGen, &part, &playerMove, &rules);
+    MazeRunner<AttributePlayer, AdvancedPlayerData, AdvancedPlayerMove, AdvancedMapTile, MazeSettings> 
+        m(&mazeGen, &part, &playerMove, &rules, seed);
     PlayerLoader<AttributePlayer> g(&m);
 
     g.loadPlayers("./Players");

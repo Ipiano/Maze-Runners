@@ -17,7 +17,7 @@ maze<AdvancedMapTile> AdvancedGenerator::generateMaze(unsigned int players)
 
     //Assign random uids to the maze tiles
     set<unsigned int> used;
-    for(int i=0; i<_w*_h; i++)
+    for(uint i=0; i<_w*_h; i++)
     {
         unsigned int id;
         do
