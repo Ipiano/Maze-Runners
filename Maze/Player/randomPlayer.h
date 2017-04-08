@@ -36,14 +36,14 @@ public:
 
 class AdvRandomPlayer : public AttributePlayer
 {
-    unsigned char _color[3] = {255, 0, 0};
+    unsigned char _color[3] = {0, 0, 255};
 public:
     AdvRandomPlayer();
     virtual ~AdvRandomPlayer();
 
     virtual PlayerAttributes getAttributes(unsigned int points)
     {
-        return PlayerAttributes{0,0,0,0,0,0,0,0};
+        return PlayerAttributes{6,0,0,0,0,0,0,0};
     }
 
     //Sets up the player to run a specific maze type

@@ -15,7 +15,10 @@ class AdvancedRules : public RuleEnforcer<AttributePlayer, AdvancedPlayerData, A
 
     void fillPlayerDataFromAttributes(PlayerAttributes attrib, AdvancedPlayerData& data);
 public:
-
+    bool playerIsDifferent(const AdvancedPlayerData& before, const AdvancedPlayerData& after)
+    {
+        return (before.x != after.x) || (before.y != after.y);
+    }
     MazeSettings getSettings(const maze<AdvancedMapTile>& m);
     AdvancedPlayerData initPlayer(AttributePlayer* player, const maze<AdvancedMapTile>& m);
     bool playerGetsTurn(AdvancedPlayerData playerData, const maze<AdvancedMapTile>& m);

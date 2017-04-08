@@ -59,11 +59,11 @@ public:
                             const uint& loc_x, const uint& loc_y);          //Location in local grid
 };
 
-extern "C" Player* createPlayer() {
+extern "C" BasicPlayer* createPlayer() {
    return new JumperPlayer();
 }
 
-extern "C" void destroyPlayer(Player *p) {
+extern "C" void destroyPlayer(BasicPlayer *p) {
    delete p;
 }
 #endif

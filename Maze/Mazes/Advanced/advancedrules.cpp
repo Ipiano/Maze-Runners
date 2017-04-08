@@ -9,7 +9,7 @@ void AdvancedRules::fillPlayerDataFromAttributes(PlayerAttributes attrib, Advanc
 {
     //Putting 3 points into speed or intelligence gets 1 bonus in that area
     //and -1 in the other
-    data.ticksPerTurn = 5 + attrib.speed/3 - attrib.intelligence/3;
+    data.ticksPerTurn = 5 - attrib.speed/3 + attrib.intelligence/3;
     data.mapVisionDist = 5 + attrib.intelligence/3 - attrib.speed/3;
 
     data.playerVisionDist = 10 + attrib.sense;

@@ -90,42 +90,59 @@ void RUNNER_TYPE::removePlayer(PlayerType* p)
 RUNNER_TEMPLATE
 bool RUNNER_TYPE::tickGame()
 {
-    unsigned int w, h;
-    point relative;
-    bool moves = false;
-    for(auto& p : _players)
+    //std::cout << "Game tick" << std::endl;
+    bool somePlayerMoved = false;
+    do
     {
-        if(_rules->playerIsDone(p.second, _m)) continue;
-        moves = true;
-
-        if(!_rules->playerGetsTurn(p.second, _m))
+        //std::cout << "Start" << std::endl;
+        unsigned int w, h;
+        point relative;
+        bool moves = false;
+        for(auto& p : _players)
         {
-            _moves[p.first] = _move->defaultMove();
+           // std::cout << "Get player move: " << p.first << std::endl;
+            if(_rules->playerIsDone(p.second, _m)) continue;
+            moves = true;
+
+            if(!_rules->playerGetsTurn(p.second, _m))
+            {
+                //std::cout << "Player does not get turn" << std::endl;
+                _moves[p.first] = _move->defaultMove();
+            }
+            else
+            {
+                //std::cout << "Get section" << std::endl;
+                Tile* area = _part->getMazeSection(w, h, p.second, relative, _m);
+
+                //std::cout << "Get move" << std::endl;
+                _moves[p.first] = p.first->move(area, w, h, relative.x, relative.y);
+            }
         }
-        else
+
+        if(!moves)
         {
-            Tile* area = _part->getMazeSection(w, h, p.second, relative, _m);
-
-            _moves[p.first] = p.first->move(area, w, h, relative.x, relative.y);
+            std::cout << "No moves!" << std::endl;
+            return false;
         }
+
+        somePlayerMoved = false;
+        for(auto& p : _players)
+        {
+            if(_rules->playerIsDone(p.second, _m)) continue;
+
+            PlayerDataType before = p.second;
+            _move->movePlayer(p.second, _moves[p.first], _m);
+            somePlayerMoved= somePlayerMoved || _rules->playerIsDifferent(before, p.second);
+
+            if(_rules->playerIsDone(p.second, _m))
+                std::cout << "Player " << p.first->playerName() << " finished on turn " << _turn_no << std::endl;
+        }
+
+        _turn_no++;
+        //std::cout << "End" << std::endl;
+        //std::cout << "Player moved? " << somePlayerMoved << std::endl;
     }
-
-    if(!moves)
-    {
-        return false;
-    }
-
-    for(auto& p : _players)
-    {
-        if(_rules->playerIsDone(p.second, _m)) continue;
-
-        _move->movePlayer(p.second, _moves[p.first], _m);
-
-        if(_rules->playerIsDone(p.second, _m))
-            std::cout << "Player " << p.first->playerName() << " finished on turn " << _turn_no << std::endl;
-    }
-
-    _turn_no++;
+    while(!somePlayerMoved);
     return true;
 }
 

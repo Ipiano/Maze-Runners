@@ -43,7 +43,8 @@ public:
 class AdvRightHandPlayer : public AttributePlayer
 {
     unsigned char _currDir = 1;
-    unsigned char _color[3] = {255, 0, 255};
+    unsigned char _color[3] = {255, 255, 0};
+    unsigned int _stickies = 4;
 public:
     AdvRightHandPlayer();
     virtual ~AdvRightHandPlayer();
@@ -53,7 +54,7 @@ public:
 
     virtual PlayerAttributes getAttributes(unsigned int points)
     {
-        return PlayerAttributes{3,0,0,0,0,0,0,0};
+        return PlayerAttributes{6,0,0,0,0,4,0,0};
     }
 
     //Sets up the player to run a specific maze type
@@ -80,4 +81,6 @@ extern "C" AttributePlayer* createPlayer() {
 
 extern "C" void destroyPlayer(AttributePlayer *p) {
    delete p;
-}#endif // PLAYER_H
+}
+
+#endif // PLAYER_H

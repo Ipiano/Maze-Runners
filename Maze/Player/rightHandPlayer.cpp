@@ -69,6 +69,14 @@ AdvancedPlayerMove AdvRightHandPlayer::move(const AdvancedMapTile* surroundings,
 {
     AdvancedMapTile loc = surroundings[area_width*loc_y + loc_x];
 
+    if(_stickies > 0 && (rand() % 100 == 0))
+    {
+        _stickies--;
+        AdvancedPlayerMove out;
+        out.attemptedMove = AdvancedPlayerMove::Move::STICKYBOMB;
+        return out;
+    }
+
     _currDir = rightDir();
     while((loc.exits & _currDir) == 0)
         _currDir = leftDir();

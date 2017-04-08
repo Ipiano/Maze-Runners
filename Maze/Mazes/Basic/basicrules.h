@@ -13,6 +13,10 @@ class BasicRules : public RuleEnforcer<BasicPlayer, BasicPlayerData, MapTile, Ma
     int playerCount = 0;
 
 public:
+    bool playerIsDifferent(const BasicPlayerData& before, const BasicPlayerData& after)
+    {
+        return (before.x != after.x) || (before.y != after.y);
+    }
     MazeSettings getSettings(const maze<MapTile>& m);
     BasicPlayerData initPlayer(BasicPlayer* player, const maze<MapTile>& m);
     bool playerGetsTurn(BasicPlayerData playerData, const maze<MapTile>& m);
