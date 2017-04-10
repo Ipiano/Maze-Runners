@@ -32,7 +32,7 @@ CXXFLAGS = $(CFLAGS)
 
 # Math library
 GL_LIBS = -lglut -lGLU -lGL
-LIBS = -lm -ldl -lanimalgo -ldraw
+LIBS = -lm -ldl -lanimalgo -ldraw -lpthread
 LIBDIRS = -L$(DRAWDIR) -L$(ALGODIR)
 MAKETARGS = all
 
