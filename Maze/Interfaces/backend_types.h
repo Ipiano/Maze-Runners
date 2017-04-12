@@ -27,7 +27,7 @@ struct AdvancedPlayerData
     int wallBreaksLeft;
     int wallPhaseLeft;
     int luckLeft;
-    int willLeft;
+    int stickyBombAvoids;
     int stickyBombs;
     AdvancedPlayerMove moveInProgress;
 };
@@ -77,7 +77,7 @@ private:
     Tile* _maze = nullptr;
     unsigned int _w, _h;
     bool _wrapped;
-
+    Tile _out_of_bounds;
 public:
     std::vector<point> players;
     point exit;
@@ -91,8 +91,11 @@ public:
     Tile& at(const unsigned int& x, const unsigned int& y)
     {
         if(x < 0 || x >= _w ||  y < 0 ||  y >= _h)
-            throw std::out_of_range("Attempted to access " + std::to_string(x) + ", " + std::to_string(y) + " in maze size " +
-            std::to_string(_w) + ", " + std::to_string(_h));
+        {
+            //Reset out of bounds tile and return it
+            _out_of_bounds = Tile();
+            return _out_of_bounds;
+        }
         return *(_maze + _w*y + x);
     }
 

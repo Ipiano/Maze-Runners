@@ -188,7 +188,20 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::draw(const DrawingCanvas*
         auto mTile = maze.at(p.second.x, p.second.y);
         if(pLoc.x != p.second.x || pLoc.y != p.second.y)
         {
+            if(_buffer)
+            {
+                _drawCell(pLoc.x, pLoc.y, pTile);
+            }
             pLoc = point{p.second.x, p.second.y};
+
+            //Only add player colors when they move
+            unsigned char* pcolor = p.first->playerColor();
+
+            unsigned char r = pcolor[0]/3;
+            unsigned char g = pcolor[1]/3;
+            unsigned char b = pcolor[2]/3;
+
+            _addColor(pLoc.x, pLoc.y, color{r, g, b});
         }
         else if(pTile != mTile)
         {
@@ -242,40 +255,7 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::draw(const DrawingCanvas*
         //cerr << "Maze drawn" << endl;
     }
 
-    //Redraw places players were previously
-    for(auto p : *players)
-    {
-        //cout << "Draw player " << p.first << " : " << p.second << endl;
-        unsigned char* pcolor = p.first->playerColor();
-        point ploc = point{p.second.x, p.second.y};
-
-        unsigned char r = pcolor[0]/3;
-        unsigned char g = pcolor[1]/3;
-        unsigned char b = pcolor[2]/3;
-
-        _addColor(ploc.x, ploc.y, color{r, g, b});
-    }
-
     if(_buffer == nullptr) return;
-
-    //Redraw places players were previously
-    for(auto p : *players)
-    {
-        //cout << "Draw player " << p.first << " : " << p.second << endl;
-        point ploc = point{p.second.x, p.second.y};
-        try{
-            _drawCell(ploc.x+1, ploc.y, maze.at(point{ploc.x+1, ploc.y}));
-        }catch(exception& ex){}
-        try{
-            _drawCell(ploc.x-1, ploc.y, maze.at(point{ploc.x-1, ploc.y}));
-        }catch(exception& ex){}
-        try{  
-            _drawCell(ploc.x, ploc.y+1, maze.at(point{ploc.x, ploc.y+1}));
-        }catch(exception& ex){}
-        try{        
-            _drawCell(ploc.x, ploc.y-1, maze.at(point{ploc.x, ploc.y-1}));
-        }catch(exception& ex){}
-    }
 
     //Draw players
     for(auto p : *players)

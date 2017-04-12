@@ -27,6 +27,8 @@ class AdvancedMover : public PlayerMover<AdvancedPlayerData, AdvancedPlayerMove,
                     const AdvancedPlayerMove& move,
                     maze<AdvancedMapTile>& m);
 
+    bool adjacentAndConnected(maze<AdvancedMapTile>& m, const uint& x1, const uint& y1, const uint& x2, const uint& y2);
+
     MazePoint closestPointToExit(MazePoint current, maze<AdvancedMapTile>& m);
 
 public:

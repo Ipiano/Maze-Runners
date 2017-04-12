@@ -21,7 +21,7 @@ struct AdvancedMapTile
     unsigned int uid;
     bool isExit = false;
     bool hasStickyBomb = false;
-    unsigned char exits; //Each of last 4 bytes corresponds to valid exit direction
+    unsigned char exits=0; //Each of last 4 bytes corresponds to valid exit direction
 
     bool operator ==(const AdvancedMapTile& o)
     {
@@ -61,7 +61,7 @@ struct PlayerAttributes
     unsigned int mysticality;   //Determines how many times the player can phase through a wall
     unsigned int cunning;       //Determines how many times the player can drop a sticky bomb
     unsigned int sense;         //Determines how far around the player can sense other players
-    unsigned int will;          //Determines how many times the player can teleport to a previously visited location
+    unsigned int agility;       //Determines how many times the player can avoid a sticky bomb
 };
 
 struct AdvancedPlayerMove

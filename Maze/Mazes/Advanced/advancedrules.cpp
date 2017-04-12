@@ -17,7 +17,7 @@ void AdvancedRules::fillPlayerDataFromAttributes(PlayerAttributes attrib, Advanc
     data.wallBreaksLeft = attrib.strength;
     data.wallPhaseLeft = attrib.mysticality/2;
     data.luckLeft = attrib.luck;
-    data.willLeft = attrib.will*10;
+    data.stickyBombAvoids = attrib.agility;
     data.stickyBombs = attrib.cunning;
     data.moveInProgress.attemptedMove = AdvancedPlayerMove::Move::NOOP;
 }
@@ -45,7 +45,7 @@ AdvancedPlayerData AdvancedRules::initPlayer(AttributePlayer* player, const maze
 
     PlayerAttributes p = player->getAttributes(ATTRIBUTE_POINTS);
 
-    int attribSum = p.speed+p.intelligence+p.strength+p.luck+p.mysticality+p.cunning+p.sense+p.will;
+    int attribSum = p.speed+p.intelligence+p.strength+p.luck+p.mysticality+p.cunning+p.sense+p.agility;
     if(attribSum > ATTRIBUTE_POINTS)
     {
         cout << "Player " << out.id << ", " << player->playerName() << ", used too many attribute points! (" << attribSum << ")" << endl;

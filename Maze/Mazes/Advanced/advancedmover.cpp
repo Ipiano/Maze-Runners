@@ -6,6 +6,30 @@
 
 using namespace std;
 
+bool AdvancedMover::adjacentAndConnected(maze<AdvancedMapTile>& m, const uint& x1, const uint& y1, const uint& x2, const uint& y2)
+{
+    //Check if tiles are not adjacent
+    if(abs(x1-x2) + abs(y1-y2) != 1) return false;
+
+    //Check if connected
+    AdvancedMapTile t1 = m.at(x1, y1);
+    AdvancedMapTile t2 = m.at(x2, y2);
+
+    if(x1 == x2 - 1 &&
+     (t1.exits & (uint) AdvancedMapTile::Direction::EAST) && (t2.exits & (uint) AdvancedMapTile::Direction::WEST)) return true;
+
+    if(x1 == x2 + 1 &&
+     (t1.exits & (uint) AdvancedMapTile::Direction::WEST) && (t2.exits & (uint) AdvancedMapTile::Direction::EAST)) return true;
+
+    if(y1 == y2 - 1 &&
+     (t1.exits & (uint) AdvancedMapTile::Direction::SOUTH) && (t2.exits & (uint) AdvancedMapTile::Direction::NORTH)) return true;
+
+    if(y1 == y2 + 1 &&
+     (t1.exits & (uint) AdvancedMapTile::Direction::NORTH) && (t2.exits & (uint) AdvancedMapTile::Direction::SOUTH)) return true;
+
+     return false;
+}
+
 MazePoint AdvancedMover::closestPointToExit(MazePoint current, maze<AdvancedMapTile>& m)
 {
     queue<MazePoint> bfs;
@@ -70,6 +94,7 @@ void AdvancedMover::performPlayerPendingMove(AdvancedPlayerData& playerData,
                                   maze<AdvancedMapTile>& m)
 {
     bool playerMoved = false;
+    _visited[playerData.id][playerData.x][playerData.y] = true;
     switch(playerData.moveInProgress.attemptedMove)
     {
         case AdvancedPlayerMove::Move::NOOP: return;
@@ -77,19 +102,37 @@ void AdvancedMover::performPlayerPendingMove(AdvancedPlayerData& playerData,
         case AdvancedPlayerMove::Move::MOVETO:
             playerData.x += playerData.moveInProgress.destination.x;
             playerData.y += playerData.moveInProgress.destination.y;
-            if(abs(playerData.moveInProgress.destination.x) > 0 && abs(playerData.moveInProgress.destination.y))
-                playerData.willLeft--;
 
             playerMoved = true;
         break;
 
         case AdvancedPlayerMove::Move::WALLBREAK:
+        {
             m.at(playerData.x, playerData.y).exits |= (unsigned char)playerData.moveInProgress.dir;
+            switch(playerData.moveInProgress.dir)
+            {
+                case AdvancedMapTile::Direction::NORTH:
+                    playerData.y--;
+                    m.at(playerData.x, playerData.y).exits |= ((unsigned char)AdvancedMapTile::Direction::SOUTH);
+                    break;
+                case AdvancedMapTile::Direction::SOUTH:
+                    playerData.y++;
+                    m.at(playerData.x, playerData.y).exits |= ((unsigned char)AdvancedMapTile::Direction::NORTH);
+                    break;
+                case AdvancedMapTile::Direction::WEST:
+                    playerData.x--;
+                    m.at(playerData.x, playerData.y).exits |= ((unsigned char)AdvancedMapTile::Direction::EAST);
+                    break;
+                case AdvancedMapTile::Direction::EAST:
+                    playerData.x++;
+                    m.at(playerData.x, playerData.y).exits |= ((unsigned char)AdvancedMapTile::Direction::WEST);
+                    break;
+            }
             playerData.wallBreaksLeft--;
-            goto breakorphase;
+            playerMoved = true;
+        }
+        break;
         case AdvancedPlayerMove::Move::WALLPHASE:
-            playerData.wallPhaseLeft--;
-breakorphase:
             switch(playerData.moveInProgress.dir)
             {
                 case AdvancedMapTile::Direction::NORTH:
@@ -106,6 +149,7 @@ breakorphase:
                     break;
             }
             playerMoved = true;
+            playerData.wallPhaseLeft--;
         break;
         case AdvancedPlayerMove::Move::STICKYBOMB:
             playerData.stickyBombs--;
@@ -126,8 +170,13 @@ breakorphase:
     //If so, change the ticksLeftForCurrentMove so they have to wait to move
     if(playerMoved && m.at(playerData.x, playerData.y).hasStickyBomb)
     {
-        playerData.ticksLeftForCurrentMove = 10;
-        playerData.moveInProgress = defaultMove();
+        if(playerData.stickyBombAvoids > 0)
+            playerData.stickyBombAvoids--;
+        else
+        {
+            playerData.ticksLeftForCurrentMove = 10;
+            playerData.moveInProgress = defaultMove();
+        }
     }
 }
 
@@ -156,8 +205,22 @@ bool AdvancedMover::isValidMove(AdvancedPlayerData& playerData,
                (currTile.exits & (unsigned int) AdvancedMapTile::Direction::WEST) > 0) return true;
 
             //Check if trying to teleport to a previously visited location
-            if(_visited[playerData.id][playerData.x+move.destination.x][playerData.y+move.destination.y]
-               && playerData.willLeft > 0) return true;
+            uint targetX = playerData.x+move.destination.x;
+            uint targetY = playerData.y+move.destination.y;
+            if(_visited[playerData.id][targetX][targetY])
+                return true;
+
+            if(_visited[playerData.id][targetX-1][targetY] && adjacentAndConnected(m, targetX, targetY, targetX-1, targetY))
+                return true;
+
+            if(_visited[playerData.id][targetX+1][targetY] && adjacentAndConnected(m, targetX, targetY, targetX+1, targetY))
+                return true;         
+
+            if(_visited[playerData.id][targetX][targetY-1] && adjacentAndConnected(m, targetX, targetY, targetX, targetY-1))
+                return true;            
+
+            if(_visited[playerData.id][targetX][targetY+1] && adjacentAndConnected(m, targetX, targetY, targetX, targetY+1))
+                return true;
 
             return false;
         }
