@@ -47,11 +47,11 @@ int main(int argc, char** argv)
 
     MazeVisualizer<AttributePlayer, AdvancedPlayerData, AdvancedMapTile> visual(&m);
     AnimatedMaze animator(&m);
-    animator.reset();
+    animator.start();
 
     ScreenHandler screen(&canvas, &input, &visual);
 
-    input.addIdleReceiver(&animator, &AnimatedMaze::tick);
+    input.addIdleReceiver(&animator, &AnimateableAlgo::step);
     input.addIdleReceiver(&glutPostRedisplay);
 
     glutMainLoop();
