@@ -31,6 +31,7 @@ class MazeRunner : public MazeRunnerBase, public MazeRunnerAccess<PlayerType, Pl
     RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* _rules;
     
     maze<Tile> _m;
+    unsigned int _max_turn;
     unsigned int _seed;
 
 protected:
@@ -41,7 +42,7 @@ protected:
 public:
     MazeRunner(MazeGenerator<Tile>* gen, MazePartitioner<PlayerDataType, Tile>* part, PlayerMover<PlayerDataType, PlayerMoveType, Tile>* move, 
                RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* rules,
-               unsigned int seed = 0);
+               unsigned int max_turns, unsigned int seed = 0);
     ~MazeRunner();
 
     maze<Tile>& getMaze() { return _m; }
@@ -63,8 +64,8 @@ public:
 
 RUNNER_TEMPLATE
 RUNNER_TYPE::MazeRunner(MazeGenerator<Tile>* gen, MazePartitioner<PlayerDataType, Tile>* part, PlayerMover<PlayerDataType, PlayerMoveType, Tile>* move, 
-               RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* rules, unsigned int seed) 
-: _gen(gen), _part(part), _move(move), _rules(rules), _seed(seed)
+               RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* rules, unsigned int max_turns, unsigned int seed) 
+: _gen(gen), _part(part), _move(move), _rules(rules), _max_turn(max_turns), _seed(seed)
 {
 
 }
@@ -92,6 +93,7 @@ bool RUNNER_TYPE::tickGame()
 {
     //std::cout << "Game tick" << std::endl;
     bool somePlayerMoved = false;
+    int ticks = 0;
     do
     {
         //std::cout << "Start" << std::endl;
@@ -125,6 +127,12 @@ bool RUNNER_TYPE::tickGame()
             return false;
         }
 
+        if(_turn_no > _max_turn)
+        {
+            std::cout << "Players took too long!" << std::endl;
+            return false;
+        }
+
         somePlayerMoved = false;
         for(auto& p : _players)
         {
@@ -142,7 +150,7 @@ bool RUNNER_TYPE::tickGame()
         //std::cout << "End" << std::endl;
         //std::cout << "Player moved? " << somePlayerMoved << std::endl;
     }
-    while(!somePlayerMoved);
+    while(!somePlayerMoved && ticks++ < 100);
     return true;
 }
 

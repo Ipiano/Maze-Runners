@@ -36,6 +36,7 @@ MazePoint AdvancedMover::closestPointToExit(MazePoint current, maze<AdvancedMapT
     unordered_map<int, unordered_map<int, int>> distances;
     int currDist = 1;
     int frontSize = 1;
+    distances[m.exit.x][m.exit.y] = 1;
     bfs.push(MazePoint{m.exit.x, m.exit.y});
     while(bfs.size())
     {
@@ -58,25 +59,36 @@ MazePoint AdvancedMover::closestPointToExit(MazePoint current, maze<AdvancedMapT
                 return current;
             }
 
-            distances[next.x][next.y] = currDist;
             AdvancedMapTile t = m.at(next.x, next.y);
-            if(t.exits & (unsigned int)AdvancedMapTile::Direction::NORTH)
+            if((t.exits & (unsigned int)AdvancedMapTile::Direction::NORTH)
+                && distances[next.x][next.y-1] == 0)
             {
+                distances[next.x][next.y-1] = currDist+1;
+
                 nextFront++;
                 bfs.push(MazePoint{next.x, next.y-1});
             }
-            if(t.exits & (unsigned int)AdvancedMapTile::Direction::SOUTH)
+            if((t.exits & (unsigned int)AdvancedMapTile::Direction::SOUTH)
+                && distances[next.x][next.y+1] == 0)
             {
+                distances[next.x][next.y+1] = currDist+1;
+
                 nextFront++;
                 bfs.push(MazePoint{next.x, next.y+1});
             }
-            if(t.exits & (unsigned int)AdvancedMapTile::Direction::EAST)
+            if((t.exits & (unsigned int)AdvancedMapTile::Direction::EAST)
+                && distances[next.x+1][next.y] == 0)
             {
+                distances[next.x+1][next.y] = currDist+1;
+
                 nextFront++;
                 bfs.push(MazePoint{next.x+1, next.y});
             }
-            if(t.exits & (unsigned int)AdvancedMapTile::Direction::WEST)
+            if((t.exits & (unsigned int)AdvancedMapTile::Direction::WEST)
+                && distances[next.x-1][next.y] == 0)
             {
+                distances[next.x-1][next.y] = currDist+1;
+
                 nextFront++;
                 bfs.push(MazePoint{next.x-1, next.y});
             }
@@ -228,7 +240,9 @@ bool AdvancedMover::isValidMove(AdvancedPlayerData& playerData,
         {
             AdvancedMapTile currTile = m.at(playerData.x, playerData.y);
             if((currTile.exits & (unsigned char)move.dir) == 0)
+            {
                 return playerData.wallBreaksLeft > 0;
+            }
             
             return false;
         }
