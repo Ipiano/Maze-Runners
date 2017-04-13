@@ -10,15 +10,21 @@ LINK = g++
 CFLAGS = -std=c++11 -Wall -O
 CXXFLAGS = $(CFLAGS)
 
-PLAYEROBJS = randomPlayer.o rightHandPlayer.o jumperPlayer.o
+PLAYEROBJS = randomPlayer.o rightHandPlayer.o graphPlayer.o
 
 PLAYERSOS = $(PLAYEROBJS:.o=.so)
 
-BASICGAMEOBJS = ./Mazes/Basic/basicmover.o ./Mazes/Basic/basicrules.o \
-			./Mazes/Basic/dfsgenerator.o ./Mazes/Basic/squarepartitioner.o
+BASICGAMEOBJS = \
+   ./Mazes/Basic/basicmover.o \
+   ./Mazes/Basic/basicrules.o \
+   ./Mazes/Basic/dfsgenerator.o \
+   ./Mazes/Basic/squarepartitioner.o
 
-ADVANCEDGAMEOBJS = ./Mazes/Advanced/advancedmover.o ./Mazes/Advanced/advancedrules.o \
-			./Mazes/Advanced/advancedgenerator.o ./Mazes/Advanced/advancedpartitioner.o
+ADVANCEDGAMEOBJS = \
+   ./Mazes/Advanced/advancedmover.o \
+   ./Mazes/Advanced/advancedrules.o \
+   ./Mazes/Advanced/advancedgenerator.o \
+   ./Mazes/Advanced/advancedpartitioner.o
 
 # Math library
 LIBS = -lm -ldl
@@ -35,6 +41,9 @@ all: game $(PLAYERSOS)
 
 %.so: %.o
 	mkdir -p Players
+	$(LINK) -shared -Wl,-soname,./Players/$@ -o ./Players/$@ $^ -lc
+
+graphPlayer.so: graphPlayer.o graph.o
 	$(LINK) -shared -Wl,-soname,./Players/$@ -o ./Players/$@ $^ -lc
 
 game: $(BASICGAMEOBJS) $(ADVANCEDGAMEOBJS) main.o

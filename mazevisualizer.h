@@ -95,7 +95,7 @@ typename MazeVisualizer<PlayerType, PlayerDataType, Tile>::color MazeVisualizer<
             return (*yit).second;
     }
 
-    return color{0, 0, 0};
+    return color{255, 255, 255};
 }
 
 template<class PlayerType, class PlayerDataType, class Tile>

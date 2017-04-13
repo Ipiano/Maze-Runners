@@ -30,6 +30,7 @@ struct AdvancedPlayerData
     int stickyBombAvoids;
     int stickyBombs;
     AdvancedPlayerMove moveInProgress;
+    AdvancedPlayerData(uint X=0, uint Y=0, int ID=0) : x(X), y(Y), id(ID) {}
 };
 
 struct point
