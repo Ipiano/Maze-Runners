@@ -43,7 +43,7 @@ public:
 
     virtual PlayerAttributes getAttributes(unsigned int points)
     {
-        return PlayerAttributes{10,0,0,0,0,0,0,0};
+        return PlayerAttributes{0,0,0,0,0,0,0,0};
     }
 
     //Sets up the player to run a specific maze type

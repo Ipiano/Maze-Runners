@@ -91,12 +91,12 @@ void RUNNER_TYPE::removePlayer(PlayerType* p)
 RUNNER_TEMPLATE
 bool RUNNER_TYPE::tickGame()
 {
-    //std::cout << "Game tick" << std::endl;
+    //std::cerr << "Game tick" << std::endl;
     bool somePlayerMoved = false;
     int ticks = 0;
     do
     {
-        //std::cout << "Start" << std::endl;
+        //std::cerr << "Start" << std::endl;
         unsigned int w, h;
         point relative;
         bool moves = false;
@@ -108,15 +108,15 @@ bool RUNNER_TYPE::tickGame()
 
             if(!_rules->playerGetsTurn(p.second, _m))
             {
-                //std::cout << "Player does not get turn" << std::endl;
+                //std::cerr << "Player does not get turn" << std::endl;
                 _moves[p.first] = _move->defaultMove();
             }
             else
             {
-                //std::cout << "Get section" << std::endl;
+                //std::cerr << "Get section" << std::endl;
                 Tile* area = _part->getMazeSection(w, h, p.second, relative, _m);
 
-                //std::cout << "Get move" << std::endl;
+                //std::cerr << "Get move" << std::endl;
                 _moves[p.first] = p.first->move(area, w, h, relative.x, relative.y);
             }
         }
@@ -147,8 +147,8 @@ bool RUNNER_TYPE::tickGame()
         }
 
         _turn_no++;
-        //std::cout << "End" << std::endl;
-        //std::cout << "Player moved? " << somePlayerMoved << std::endl;
+        //std::cerr << "End" << std::endl;
+        //std::cerr << "Player moved? " << somePlayerMoved << std::endl;
     }
     while(!somePlayerMoved && ticks++ < 100);
     return true;

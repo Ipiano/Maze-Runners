@@ -53,6 +53,7 @@ int main(int argc, char** argv)
 
     input.addIdleReceiver(&animator, &AnimateableAlgo::step);
     input.addIdleReceiver(&glutPostRedisplay);
+    //input.addIdleReceiver([](){cin.get();});
 
     glutMainLoop();
 

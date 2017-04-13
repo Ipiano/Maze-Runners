@@ -20,7 +20,7 @@ public:
         return (before.x != after.x) || (before.y != after.y);
     }
     MazeSettings getSettings(const maze<AdvancedMapTile>& m);
-    AdvancedPlayerData initPlayer(AttributePlayer* player, const maze<AdvancedMapTile>& m);
+    AdvancedPlayerData initPlayer(AttributePlayer* player, maze<AdvancedMapTile>& m);
     bool playerGetsTurn(AdvancedPlayerData playerData, const maze<AdvancedMapTile>& m);
     bool playerIsDone(AdvancedPlayerData playerData, const maze<AdvancedMapTile>& m);
 };

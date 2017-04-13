@@ -12,7 +12,7 @@ void AdvancedRules::fillPlayerDataFromAttributes(PlayerAttributes attrib, Advanc
     data.ticksPerTurn = 5 - attrib.speed/3 + attrib.intelligence/3;
     data.mapVisionDist = 5 + attrib.intelligence/3 - attrib.speed/3;
 
-    data.playerVisionDist = 10 + attrib.sense;
+    data.playerVisionDist = 7 + attrib.sense;
     data.ticksLeftForCurrentMove = 0;
     data.wallBreaksLeft = attrib.strength;
     data.wallPhaseLeft = attrib.mysticality/2;
@@ -27,7 +27,7 @@ MazeSettings AdvancedRules::getSettings(const maze<AdvancedMapTile>& m)
     return MazeSettings{m.width(), m.height(), m.wrapped(), m.exit.x, m.exit.y};
 }
 
-AdvancedPlayerData AdvancedRules::initPlayer(AttributePlayer* player, const maze<AdvancedMapTile>& m)
+AdvancedPlayerData AdvancedRules::initPlayer(AttributePlayer* player, maze<AdvancedMapTile>& m)
 {
     AdvancedPlayerData out;
     if(_playerIds.find(player) != _playerIds.end())
@@ -42,6 +42,11 @@ AdvancedPlayerData AdvancedRules::initPlayer(AttributePlayer* player, const maze
         out = AdvancedPlayerData{m.players[id].x, m.players[id].y , id};
     }
     else out = AdvancedPlayerData{0,0, -1};
+
+    if(out.id >= 0)
+    {
+        m.at(out.x, out.y).players.push_back(out.id);
+    }
 
     PlayerAttributes p = player->getAttributes(ATTRIBUTE_POINTS);
 

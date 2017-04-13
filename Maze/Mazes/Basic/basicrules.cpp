@@ -8,7 +8,7 @@ MazeSettings BasicRules::getSettings(const maze<MapTile>& m)
     return MazeSettings{m.width(), m.height(), m.wrapped(), m.exit.x, m.exit.y};
 }
 
-BasicPlayerData BasicRules::initPlayer(BasicPlayer* player, const maze<MapTile>& m)
+BasicPlayerData BasicRules::initPlayer(BasicPlayer* player, maze<MapTile>& m)
 {
     if(_playerIds.find(player) != _playerIds.end())
     {

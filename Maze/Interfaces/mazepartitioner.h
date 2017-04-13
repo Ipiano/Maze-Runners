@@ -8,6 +8,9 @@ template<class PlayerDataType, class Tile>
 class MazePartitioner
 {
 public:
+
+    virtual ~MazePartitioner(){}
+
     /*
      *  Returns an array which contains a subsection of a maze
      *

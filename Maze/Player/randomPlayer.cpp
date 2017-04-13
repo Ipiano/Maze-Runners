@@ -62,8 +62,12 @@ AdvancedPlayerMove AdvRandomPlayer::move(const AdvancedMapTile* surroundings,   
     for(int i=0; i<4; i++, dir <<= 1)
         if((valid & dir) != 0) moves.push_back(dir);
 
-    return AdvancedPlayerMove((AdvancedMapTile::Direction)(moves[rand()%moves.size()]));
-
-
-    return out;
+    if(moves.size())
+    {
+        return AdvancedPlayerMove((AdvancedMapTile::Direction)(moves[rand()%moves.size()]));
+    }
+    else
+    {
+        return AdvancedPlayerMove(AdvancedMapTile::Direction::NONE);
+    }
 }

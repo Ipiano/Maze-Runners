@@ -18,7 +18,7 @@ public:
         return (before.x != after.x) || (before.y != after.y);
     }
     MazeSettings getSettings(const maze<MapTile>& m);
-    BasicPlayerData initPlayer(BasicPlayer* player, const maze<MapTile>& m);
+    BasicPlayerData initPlayer(BasicPlayer* player, maze<MapTile>& m);
     bool playerGetsTurn(BasicPlayerData playerData, const maze<MapTile>& m);
     bool playerIsDone(BasicPlayerData playerData, const maze<MapTile>& m);
 };

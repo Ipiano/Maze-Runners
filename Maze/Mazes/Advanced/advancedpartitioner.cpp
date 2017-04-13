@@ -1,5 +1,6 @@
 #include "advancedpartitioner.h"
 #include <exception>
+#include <cmath>
 
 using namespace std;
 
@@ -7,16 +8,17 @@ AdvancedMapTile* AdvancedPartitioner::getMazeSection(unsigned int& width, unsign
                             AdvancedPlayerData& player, point& relative_loc,
                             maze<AdvancedMapTile>& m)
 {
-    delete[] reuse;
-    reuse = nullptr;
+    int maxSize = std::max(player.mapVisionDist, player.playerVisionDist)*2 + 1;
+    int outSize = maxSize*maxSize;
 
     point target_loc = point{player.x, player.y};
-    if(reuse == nullptr)
+    width = height = maxSize;
+    if(_allocated[outSize] == nullptr)
     {
-        width = height = 11;
-        reuse = new AdvancedMapTile[width*height];
+        _allocated[outSize] = new AdvancedMapTile[width*height];
     }
-    AdvancedMapTile* outiter = reuse;
+
+    AdvancedMapTile* outiter = _allocated[outSize];
     auto initer = m.begin();
     unsigned int mwidth = m.width();
     unsigned int mheight = m.height();
@@ -32,9 +34,29 @@ AdvancedMapTile* AdvancedPartitioner::getMazeSection(unsigned int& width, unsign
 
         for(uint j=0, j_ = x_start; j<width; j++, j_++)
         {
+            int _i = i-h2;
+            int _j = j-w2;
+            int ptDist = sqrt(_j*_j+_i*_i);
             if(i_ >= 0 && i_ < mheight && j_ >= 0 && j_ < mwidth)
             {
-                *outiter = *initer;
+                //Check if they get the whole tile
+                if(ptDist < player.mapVisionDist)
+                {
+                    *outiter = *initer;
+                }
+                //Check if they get just the players and there are actually players
+                else if(ptDist < player.playerVisionDist && initer->players.size() > 0)
+                {
+                    *outiter = AdvancedMapTile();
+                    outiter->exits = 0;
+                    outiter->players = initer->players;
+                }
+                //They get nothing
+                else
+                {
+                    *outiter = AdvancedMapTile();
+                    outiter->exits = 0;
+                }
                 ++initer;
             }
             else
@@ -49,5 +71,5 @@ AdvancedMapTile* AdvancedPartitioner::getMazeSection(unsigned int& width, unsign
 
     relative_loc = point{width/2, height/2};
 
-    return reuse;
+    return _allocated[outSize];
 }

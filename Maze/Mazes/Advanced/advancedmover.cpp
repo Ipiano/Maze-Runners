@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <queue>
-
+#include <algorithm>
 using namespace std;
 
 bool AdvancedMover::adjacentAndConnected(maze<AdvancedMapTile>& m, const uint& x1, const uint& y1, const uint& x2, const uint& y2)
@@ -106,6 +106,8 @@ void AdvancedMover::performPlayerPendingMove(AdvancedPlayerData& playerData,
                                   maze<AdvancedMapTile>& m)
 {
     bool playerMoved = false;
+    uint startx = playerData.x;
+    uint starty = playerData.y;
     _visited[playerData.id][playerData.x][playerData.y] = true;
     switch(playerData.moveInProgress.attemptedMove)
     {
@@ -180,14 +182,22 @@ void AdvancedMover::performPlayerPendingMove(AdvancedPlayerData& playerData,
 
     //Check if player stepped on a sticky bomb
     //If so, change the ticksLeftForCurrentMove so they have to wait to move
-    if(playerMoved && m.at(playerData.x, playerData.y).hasStickyBomb)
+    if(playerMoved)
     {
-        if(playerData.stickyBombAvoids > 0)
-            playerData.stickyBombAvoids--;
-        else
+        auto& newTile = m.at(playerData.x, playerData.y);
+        auto& oldTile = m.at(startx, starty);
+
+        oldTile.players.erase(find(oldTile.players.begin(), oldTile.players.end(), playerData.id));
+        newTile.players.push_back(playerData.id);
+        if(newTile.hasStickyBomb)
         {
-            playerData.ticksLeftForCurrentMove = 10;
-            playerData.moveInProgress = defaultMove();
+            if(playerData.stickyBombAvoids > 0)
+                playerData.stickyBombAvoids--;
+            else
+            {
+                playerData.ticksLeftForCurrentMove = 10;
+                playerData.moveInProgress = defaultMove();
+            }
         }
     }
 }
