@@ -36,6 +36,8 @@ LIBS = -lm -ldl -lanimalgo -ldraw -lpthread
 LIBDIRS = -L$(DRAWDIR) -L$(ALGODIR)
 MAKETARGS = all
 
+VPATH = Maze/Mazes/Advanced:Maze/Mazes/Basic:Maze:DrawLib/GlutInterfaces:DrawLib/IOInterfaces:DrawLib/IOInterfaces/Widgets/Layouts
+
 #-----------------------------------------------------------------------
 # Specific targets:
 
@@ -61,3 +63,24 @@ clean:
 	rm -f visual
 
 remake: clean all
+
+main.o: playerloader.h advancedgenerator.h advancedmover.h advancedrules.h \
+        advancedpartitioner.h mazerunner.h mazevisualizer.h GlutInputSignaler.h\
+        GlutScreenCanvas.h StaticLayout.h ScreenHandler.h mazevisualizer.h \
+        animatedmaze.h
+
+basicmover.o: basicmover.h
+
+basicrules.o: basicrules.h
+
+dfsgenerator.o: dfsgenerator.h
+
+squarepartitioner.o: squarepartitioner.h
+
+advancedgenerator.o: advancedgenerator.h
+
+advancedmover.o: advancedmover.h
+
+advancedpartitioner.o: advancedpartitioner.h
+
+advancedrules.o: advancedrules.h

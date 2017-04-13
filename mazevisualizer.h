@@ -145,7 +145,9 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::_drawCell(const unsigned 
                (west && j < _wall))
             {
                 //cerr << "\t\tWall" << endl;
-                *(iter++) = *(iter++) = *(iter++) = 0;
+                *(iter++) = 0;
+                *(iter++) = 0;
+                *(iter++) = 0;
             }
             else
             {

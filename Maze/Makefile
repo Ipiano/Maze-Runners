@@ -10,7 +10,7 @@ LINK = g++
 CFLAGS = -std=c++11 -Wall -O
 CXXFLAGS = $(CFLAGS)
 
-PLAYEROBJS = randomPlayer.o rightHandPlayer.o graphPlayer.o
+PLAYEROBJS = randomPlayer.o rightHandPlayer.o jumperPlayer.o
 
 PLAYERSOS = $(PLAYEROBJS:.o=.so)
 
@@ -43,9 +43,6 @@ all: game $(PLAYERSOS)
 	mkdir -p Players
 	$(LINK) -shared -Wl,-soname,./Players/$@ -o ./Players/$@ $^ -lc
 
-graphPlayer.so: graphPlayer.o graph.o
-	$(LINK) -shared -Wl,-soname,./Players/$@ -o ./Players/$@ $^ -lc
-
 game: $(BASICGAMEOBJS) $(ADVANCEDGAMEOBJS) main.o
 	$(LINK) -o $@ $(GAMEOBJS) $(ADVANCEDGAMEOBJS) main.o $(LIBS)
 
@@ -58,3 +55,5 @@ clean:
 	rm game
 
 remake: clean all
+
+%.o: %.h

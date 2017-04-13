@@ -141,6 +141,7 @@ void AdvancedMover::performPlayerPendingMove(AdvancedPlayerData& playerData,
                     playerData.x++;
                     m.at(playerData.x, playerData.y).exits |= ((unsigned char)AdvancedMapTile::Direction::WEST);
                     break;
+                default: break;
             }
             playerData.wallBreaksLeft--;
             playerMoved = true;
