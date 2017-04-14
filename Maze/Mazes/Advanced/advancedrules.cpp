@@ -24,7 +24,7 @@ void AdvancedRules::fillPlayerDataFromAttributes(PlayerAttributes attrib, Advanc
 
 MazeSettings AdvancedRules::getSettings(const maze<AdvancedMapTile>& m)
 {
-    return MazeSettings{m.width(), m.height(), m.wrapped(), m.exit.x, m.exit.y};
+    return MazeSettings(m.width(), m.height(), m.wrapped(), m.exit.x, m.exit.y);
 }
 
 AdvancedPlayerData AdvancedRules::initPlayer(AttributePlayer* player, maze<AdvancedMapTile>& m)
@@ -33,13 +33,13 @@ AdvancedPlayerData AdvancedRules::initPlayer(AttributePlayer* player, maze<Advan
     if(_playerIds.find(player) != _playerIds.end())
     {
         int id = _playerIds[player];
-        out = AdvancedPlayerData{m.players[id].x, m.players[id].y, id};
+        out = AdvancedPlayerData(m.players[id].x, m.players[id].y, id);
 
     }else if(m.players.size() > playerCount)
     {
         int id;
         _playerIds[player] = id = playerCount++;
-        out = AdvancedPlayerData{m.players[id].x, m.players[id].y , id};
+        out = AdvancedPlayerData(m.players[id].x, m.players[id].y , id);
     }
     else out = AdvancedPlayerData{0,0, -1};
 

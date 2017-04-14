@@ -37,7 +37,7 @@ MazePoint AdvancedMover::closestPointToExit(MazePoint current, maze<AdvancedMapT
     int currDist = 1;
     int frontSize = 1;
     distances[m.exit.x][m.exit.y] = 1;
-    bfs.push(MazePoint{m.exit.x, m.exit.y});
+    bfs.push(MazePoint(m.exit.x, m.exit.y));
     while(bfs.size())
     {
         int nextFront = 0;
@@ -141,6 +141,7 @@ void AdvancedMover::performPlayerPendingMove(AdvancedPlayerData& playerData,
                     playerData.x++;
                     m.at(playerData.x, playerData.y).exits |= ((unsigned char)AdvancedMapTile::Direction::WEST);
                     break;
+                default: break;
             }
             playerData.wallBreaksLeft--;
             playerMoved = true;
@@ -160,6 +161,8 @@ void AdvancedMover::performPlayerPendingMove(AdvancedPlayerData& playerData,
                     break;
                 case AdvancedMapTile::Direction::EAST:
                     playerData.x++;
+                    break;
+                default: 
                     break;
             }
             playerMoved = true;
