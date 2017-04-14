@@ -82,7 +82,7 @@ struct AdvancedPlayerMove
 
     //Convenience constructor for converting AdvancedMapTile directions
     //to moves
-    AdvancedPlayerMove(AdvancedMapTile::Direction _dir = AdvancedMapTile::Direction::NONE)
+    AdvancedPlayerMove(AdvancedMapTile::Direction _dir = AdvancedMapTile::Direction::NONE) : dir(_dir)
     {
         switch(_dir)
         {
