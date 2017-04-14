@@ -20,6 +20,8 @@ using namespace std;
 int main(int argc, char** argv)
 {
     int width = 100, height = 100, seed = 0;
+    int cycles = 10;
+
     if(argc > 2)
     {
         width = stoi(argv[1]);
@@ -27,7 +29,10 @@ int main(int argc, char** argv)
     }
 
     if(argc > 3)
-        seed = stoi(argv[3]);
+        cycles = stoi(argv[3]);
+
+    if(argc > 4)
+        seed = stoi(argv[4]);
 
     GlutInputSignaler input;
     GlutScreenCanvas canvas;
@@ -35,7 +40,7 @@ int main(int argc, char** argv)
     canvas.init(argc, argv, "Maze", 520, 520);
     input.setAsActiveHandler();
 
-    AdvancedGenerator mazeGen(width, height);
+    AdvancedGenerator mazeGen(width, height, cycles);
     AdvancedMover playerMove;
     AdvancedPartitioner part;
     AdvancedRules rules;

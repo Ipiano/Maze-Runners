@@ -1,10 +1,12 @@
 #include "advancedgenerator.h"
 
 #include <stack>
+#include <queue>
 #include <vector>
 #include <iostream>
 #include <cmath>
 #include <set>
+#include <unordered_map>
 
 using namespace std;
 
@@ -49,13 +51,126 @@ maze<AdvancedMapTile> AdvancedGenerator::generateMaze(unsigned int players)
             _connectTiles(curr, dirs[choice]);
         }
     }
-    cerr << "Done!" << endl;
+
+    iter = _maze;
+    for(uint i=0; i<_h; i++)
+    {
+        for(uint j=0; j<_w; j++)
+        {
+            if(rand() % 100 < _cycles)
+            {
+                iter->exits |= (rand() % 8);
+
+                if(iter->exits & (uint)AdvancedMapTile::Direction::NORTH)
+                    if(i>0) (iter-_w)->exits |= (uint)AdvancedMapTile::Direction::SOUTH;
+                    else iter->exits &= ~(uint)AdvancedMapTile::Direction::NORTH;
+
+                if(iter->exits & (uint)AdvancedMapTile::Direction::SOUTH)
+                    if(i<_h-1) (iter+_w)->exits |= (uint)AdvancedMapTile::Direction::NORTH;
+                    else iter->exits &= ~(uint)AdvancedMapTile::Direction::SOUTH;
+
+                if(iter->exits & (uint)AdvancedMapTile::Direction::WEST)
+                    if(j>0) (iter-1)->exits |= (uint)AdvancedMapTile::Direction::EAST;
+                    else iter->exits &= ~(uint)AdvancedMapTile::Direction::WEST;
+
+                if(iter->exits & (uint)AdvancedMapTile::Direction::EAST)
+                    if(j<_w-1) (iter+1)->exits |= (uint)AdvancedMapTile::Direction::WEST;
+                    else iter->exits &= ~(uint)AdvancedMapTile::Direction::EAST;
+            }
+
+            ++iter;
+        }
+    }
 
     maze<AdvancedMapTile> out(_maze, _w, _h, false);
-    for(uint i=0; i<players; i++)
-        out.players.push_back(point{0, 0});
+
     out.exit = point{rand()%_w, rand()%_h};
     _maze[_w*out.exit.y + out.exit.x].isExit = true;
+
+    unordered_map<uint, unordered_map<uint, bool>> visited;
+    vector<queue<point>> startSets;
+    queue<point> front;
+    front.push(out.exit);
+    visited[out.exit.x][out.exit.y] = true;
+    while(front.size())
+    {
+        if(front.size() >= players)
+        {
+            //cerr << "Added front size " << front.size() << endl;
+            startSets.push_back(front);
+        }
+
+        int frontSize = front.size();
+        for(int i=0; i<frontSize; i++)
+        {
+            point next = front.front();
+            front.pop();
+
+            uint curr = out.at(next.x, next.y).exits;
+            point add;
+            if(curr & (uint)AdvancedMapTile::Direction::NORTH)
+            {
+                add = point{next.x, next.y-1};
+                if(!visited[add.x][add.y])
+                {
+                    visited[add.x][add.y] = true;
+                    front.push(add);
+                }
+            }
+
+            if(curr & (uint)AdvancedMapTile::Direction::SOUTH)
+            {
+                add = point{next.x, next.y+1};
+                if(!visited[add.x][add.y])
+                {
+                    visited[add.x][add.y] = true;
+                    front.push(add);
+                }
+            }
+
+            if(curr & (uint)AdvancedMapTile::Direction::EAST)
+            {
+                add = point{next.x+1, next.y};
+                if(!visited[add.x][add.y])
+                {
+                    visited[add.x][add.y] = true;
+                    front.push(add);
+                }
+            }
+
+            if(curr & (uint)AdvancedMapTile::Direction::WEST)
+            {
+                add = point{next.x-1, next.y};
+                if(!visited[add.x][add.y])
+                {
+                    visited[add.x][add.y] = true;
+                    front.push(add);
+                }
+            }
+        }
+    }
+
+    //Pick a random set of starts from the second half of the sets
+    //To give some variety
+    queue<point> startQ = startSets[rand()%(startSets.size()/2) + startSets.size()/2];
+    vector<point> starts;
+
+    //cerr << "Picking player starts from " << startQ.size() << endl;
+    while(startQ.size())
+    {
+        //cerr << startQ.front().x << ", " << startQ.front().y << endl;
+        starts.push_back(startQ.front());
+        startQ.pop();
+    }
+
+    for(int i=0; i<players; i++)
+    {
+        int startInd = rand()%starts.size();
+        out.players.push_back(starts[startInd]);
+        starts.erase(starts.begin() + startInd);
+    }
+
+    cout << "Done!" << endl;
 
     return out;
 }
