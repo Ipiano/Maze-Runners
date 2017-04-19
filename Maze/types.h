@@ -89,9 +89,9 @@ struct MazeSettings
 
     bool map_wraps;        //Whether or not the map wraps around on the edges
 
-    uint exit_x;
-    uint exit_y;           //Maze exit relative to player start; -1, -1 for unknown
-    MazeSettings(uint w=0, uint h=0, bool mw=false, uint ex=0, uint ey=0) :
+    int exit_x;
+    int exit_y;           //Maze exit relative to player start; -1, -1 for unknown
+    MazeSettings(uint w=0, uint h=0, bool mw=false, int ex=0, int ey=0) :
        map_width(w), map_height(h), map_wraps(mw), exit_x(ex), exit_y(ey) {}
 };
 

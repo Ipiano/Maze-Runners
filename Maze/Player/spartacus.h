@@ -5,6 +5,7 @@
 #include <stack>
 #include <unordered_map>
 #include <vector>
+#include <queue>
 
 #include "../types.h"
 #include "../Interfaces/attributePlayer.h"
@@ -13,15 +14,20 @@
 
 class Spartacus : public AttributePlayer
 {
-    unsigned char _color[3] = {200, 0, 0};
+    int wallBreaks;
+    unsigned char _color[3] = {0, 200, 0};
+    std::vector<MazePoint> targetLine;
+    std::vector<MazePoint> plannedPath;
 
-    std::stack<MazePoint> backtrace;
-    std::unordered_map<int, std::unordered_map<int, AdvancedMapTile>> explored;
-    std::unordered_map<int, std::unordered_map<int, bool>> dead;
+    MazePoint location;
+    AdvancedPlayerMove lastMove;
+    AdvancedMapTile lastTile;
+    bool firstTurn;
+
     std::unordered_map<int, std::unordered_map<int, bool>> visited;
-    MazePoint nextLocation, currLocation;
-    unsigned int prevUid = 0;
-    bool teleported = false;
+    std::unordered_map<int, std::unordered_map<int, bool>> deadEnd;
+    std::unordered_map<int, std::unordered_map<int, int>> exitDists;
+    std::unordered_map<int, std::unordered_map<int, AdvancedMapTile>> world;
 
 public:
     Spartacus(){}
@@ -29,27 +35,11 @@ public:
 
     virtual PlayerAttributes getAttributes(unsigned int points)
     {
-        return PlayerAttributes{0,0,0,0,0,0,0,0};
+        return PlayerAttributes{6,0,0,0,3,0,0,1};
     }
-
-    void getValidMoves(const MazePoint& loc, std::vector<MazePoint>& out);
-    void getValidDirections(const MazePoint& loc, std::vector<MazePoint>& out);
-    void bfsDead(const MazePoint& start);
-    bool nextToUnknown(const MazePoint& p);
-    bool isExit(const MazePoint& p);
 
     //Sets up the player to run a specific maze type
-    virtual void setMazeSettings(const MazeSettings& settings)
-    {
-        visited[0][0] = true;
-        nextLocation = currLocation = MazePoint{0, 0};
-
-        explored.clear();
-        dead.clear();
-        visited.clear();
-        while(backtrace.size())
-            backtrace.pop();
-    }
+    virtual void setMazeSettings(const MazeSettings& settings);
 
     //Return a string to be the player's name
     virtual std::string playerName(){return "Spartacus";}
@@ -57,11 +47,19 @@ public:
     //Return an unsigned char[3] RGB color array
     virtual unsigned char* playerColor(){return _color;}
 
+    void bfsDeadEnds(const MazePoint& start);
+    void bfsExit(const MazePoint& start);
+    std::vector<MazePoint> checkPathToTargetLine();
+
     //Main player interface. The game will call getMove and the player will
     //return a direction to move. If it is an invalid direction, they forfeit their
     //move that turn. The pointer is not guaranteed to remain valid after the function
     //returns, so don't try to save it
     virtual AdvancedPlayerMove move(const AdvancedMapTile* surroundings,                //Const pointer to local area
+                            const uint& area_width, const uint& area_height,    //Size of local area
+                            const uint& loc_x, const uint& loc_y);          //Location in local grid
+
+    AdvancedPlayerMove bookkeeping(const AdvancedMapTile* surroundings,                //Const pointer to local area
                             const uint& area_width, const uint& area_height,    //Size of local area
                             const uint& loc_x, const uint& loc_y);          //Location in local grid
 };

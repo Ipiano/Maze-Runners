@@ -1,6 +1,8 @@
-#include "jumperPlayer.h"
+#include "spartacus.h"
 
+#include <cmath>
 #include <iostream>
+#include <queue>
 
 using namespace std;
 
@@ -14,286 +16,225 @@ MazePoint operator - (const MazePoint& l, const MazePoint& r)
     return MazePoint{l.x - r.x, l.y - r.y};
 }
 
-//Get all directions that can be moved to from a point
-//which aren't known dead ends or already visited
-void JumperPlayer::getValidDirections(const MazePoint& loc, vector<MazePoint>& out)
+MazePoint operator != (const MazePoint& l, const MazePoint& r)
 {
-    MapTile& t = explored[loc.x][loc.y];
-    out.clear();
-    //cerr << "Getting valid dirs from " << loc.x << ", " << loc.y << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::NORTH) << " | " << !dead[loc.x][loc.y-1] << " | " << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::SOUTH) << " | " << !dead[loc.x][loc.y+1] << " | " << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::EAST) << " | " << !dead[loc.x+1][loc.y] << " | " << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::WEST) << " | " << !dead[loc.x-1][loc.y] << " | " << endl;
-
-    if(t.exits & (unsigned char)MapTile::Direction::NORTH && !dead[loc.x][loc.y-1] )
-        out.push_back(MazePoint{0, -1});
-    if(t.exits & (unsigned char)MapTile::Direction::SOUTH && !dead[loc.x][loc.y+1] )
-        out.push_back(MazePoint{0, 1});
-    if(t.exits & (unsigned char)MapTile::Direction::EAST && !dead[loc.x+1][loc.y] )
-        out.push_back(MazePoint{1, 0});
-    if(t.exits & (unsigned char)MapTile::Direction::WEST && !dead[loc.x-1][loc.y] )
-        out.push_back(MazePoint{-1, 0});
+    return l.x != r.x || l.y != r.y;
 }
 
-//Get all directions that can be moved to from a point
-//which aren't known dead ends or already visited
-void JumperPlayer::getValidMoves(const MazePoint& loc, vector<MazePoint>& out)
+vector<MazePoint> Bresenham(MazePoint start, MazePoint end)
 {
-    MapTile& t = explored[loc.x][loc.y];
-    out.clear();
-    //cerr << "Getting valid moves from " << loc.x << ", " << loc.y << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::NORTH) << " | " << !dead[loc.x][loc.y-1] << " | " << !visited[loc.x][loc.y-1] << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::SOUTH) << " | " << !dead[loc.x][loc.y+1] << " | " << !visited[loc.x][loc.y+1] << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::EAST) << " | " << !dead[loc.x+1][loc.y] << " | " << !visited[loc.x+1][loc.y] << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::WEST) << " | " << !dead[loc.x-1][loc.y] << " | " << !visited[loc.x-1][loc.y] << endl;
+    int deltax = end.x - start.x;
+    int deltay = end.y - start.y;
 
-    if(t.exits & (unsigned char)MapTile::Direction::NORTH && !dead[loc.x][loc.y-1] && !visited[loc.x][loc.y-1])
-        out.push_back(MazePoint{0, -1});
-    if(t.exits & (unsigned char)MapTile::Direction::SOUTH && !dead[loc.x][loc.y+1] && !visited[loc.x][loc.y+1])
-        out.push_back(MazePoint{0, 1});
-    if(t.exits & (unsigned char)MapTile::Direction::EAST && !dead[loc.x+1][loc.y] && !visited[loc.x+1][loc.y])
-        out.push_back(MazePoint{1, 0});
-    if(t.exits & (unsigned char)MapTile::Direction::WEST && !dead[loc.x-1][loc.y] && !visited[loc.x-1][loc.y])
-        out.push_back(MazePoint{-1, 0});
-}
+    vector<MazePoint> line;
 
-bool JumperPlayer::nextToUnknown(const MazePoint& p)
-{
-    if(explored[p.x].find(p.y+1) == explored[p.x].end()) return true;
-    if(explored[p.x].find(p.y-1) == explored[p.x].end()) return true;
-    if(explored[p.x+1].find(p.y) == explored[p.x+1].end()) return true;
-    if(explored[p.x-1].find(p.y) == explored[p.x-1].end()) return true;
-    return false;
-}
-
-bool JumperPlayer::isExit(const MazePoint& p)
-{
-    return explored[p.x][p.y].isExit;
-}
-
-void JumperPlayer::bfsDead(const MazePoint& start)
-{
-    //Don't mark already known dead or visited places'
-    if(visited[start.x][start.y] || dead[start.x][start.y] ||
-        nextToUnknown(start) || isExit(start)) return;
-
-    //cerr << "BFS from " << start.x << ", " << start.y << endl;
-    static vector<MazePoint> dirs;
-    getValidDirections(start, dirs);
-
-    if(dirs.size() == 1)
+    //Handle trivial cases
+    if(deltax == 0)
     {
-        //cerr << "Dead end!" << endl;
-        dead[start.x][start.y] = true;
-        bfsDead(dirs[0]);
-    }
-}
-
-PlayerMove JumperPlayer::move(const MapTile* surroundings,                //Const pointer to local area
-                            const uint& area_width, const uint& area_height,    //Size of local area
-                            const uint& loc_x, const uint& loc_y)
-{
-    PlayerMove out;
-
-    const MapTile& current = surroundings[loc_y*area_width + loc_x];
-    if(current.uid != prevUid)
-    {
-        currLocation = nextLocation;
-        if(teleported)
-            backtrace.pop();
-    }
-    prevUid = current.uid;
-    visited[currLocation.x][currLocation.y] = true;
-
-    //Copy curroundings into local map
-    auto iter = surroundings;
-    for(uint j=0, j_ = currLocation.y - loc_y; j < area_height; j++, j_++)
-        for(uint i=0, i_ = currLocation.x - loc_x; i < area_width; i++, i_++)
-        {
-            explored[i_][j_] = *(iter++);
-        }
-
-    //Fill in new dead ends
-    for(int j=0, j_ = currLocation.y - loc_y; j < (int)area_height; j++, j_++)
-        for(int i=0, i_ = currLocation.x - loc_x; i < (int)area_width; i++, i_++)
-        {
-            bfsDead(MazePoint{i_, j_});
-        }
-
-    static vector<MazePoint> moves;
-    getValidMoves(currLocation, moves);
-
-    //No moves means dead end; move back to last intersection
-    if(moves.size() == 0)
-    {
-        if(backtrace.size())
-        {
-            MazePoint to = backtrace.top();
-
-            teleported = true;
-            out.attemptedMove = PlayerMove::Move::MOVETO;
-            out.destination = to - currLocation;
-
-            nextLocation = currLocation + out.destination;
-        }
-        return out;
+        int ydir = deltay/abs(deltay);
+        for(int i=start.y; i != end.y; i+=ydir)
+            line.push_back(MazePoint(start.x, i));
+        return line;
     }
 
-    //Intersection, add it to our stack to jump back later
-    //Only need to check > 1 because none of the moves included
-    //contain the previous location
-    if(moves.size() > 1)
-        backtrace.push(currLocation);
+    if(deltay == 0)
+    {
+        int xdir = deltax/abs(deltax);
+        for(int i=start.x; i != end.x; i+=xdir)
+            line.push_back(MazePoint(i, start.y));
+        return line;
+    }
+
+    int xdir = deltax/abs(deltax);
+    int ydir = deltay/abs(deltay);
+
+    double deltaerr = abs((double)deltay / deltax);
+    double error = deltaerr - 0.5;
+    MazePoint curr = start;
+
+    MazePoint diffReg, diffAdj;
+    if(abs(deltay) > abs(deltax))
+    {
+        diffReg = MazePoint(0, ydir);
+        diffAdj = MazePoint(xdir, 0);
+    }
+    else
+    {
+        diffReg = MazePoint(xdir, 0);
+        diffAdj = MazePoint(0, ydir);
+    }
+
+    for(int i=0; i<max(abs(deltay), abs(deltax))+1; i++)
+    {
+        line.push_back(curr);
+        error += deltaerr;
+        if(error >= 0.5)
+        {
+            curr = curr + diffAdj;
+            error -= 1;
+        }
+        curr = curr + diffReg;
+    }
+
+    return line;
+}
+
+void Spartacus::setMazeSettings(const MazeSettings& settings)
+{
+    MazePoint curr(0, 0);
+    MazePoint target(settings.exit_x, settings.exit_y);
+
+    targetLine = Bresenham(curr, target);
+    targetLine.pop_front();
+
+    location = MazePoint(0,0);
+    lastMove = AdvancedPlayerMove();
+    firstTurn = true;
+    world.clear();
+    visited.clear();
+    wallBreaks = 3;
+}
+
+void Spartacus::bfsDeadEnds(const MazePoint& start)
+{
+
+}
+
+void Spartacus::bfsExit(const MazePoint& start)
+{
+
+}
+
+std::vector<MazePoint> Spartacus::checkPathToTargetLine()
+{
     
-    out.attemptedMove = PlayerMove::Move::MOVETO;
-    out.destination = moves[0];
-
-    teleported = false;
-    nextLocation = currLocation + out.destination;
-    return out;
 }
 
-
-
-//Get all directions that can be moved to from a point
-//which aren't known dead ends or already visited
-void AdvJumperPlayer::getValidDirections(const MazePoint& loc, vector<MazePoint>& out)
-{
-    AdvancedMapTile& t = explored[loc.x][loc.y];
-    out.clear();
-    //cerr << "Getting valid dirs from " << loc.x << ", " << loc.y << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::NORTH) << " | " << !dead[loc.x][loc.y-1] << " | " << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::SOUTH) << " | " << !dead[loc.x][loc.y+1] << " | " << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::EAST) << " | " << !dead[loc.x+1][loc.y] << " | " << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::WEST) << " | " << !dead[loc.x-1][loc.y] << " | " << endl;
-
-    if(t.exits & (unsigned char)AdvancedMapTile::Direction::NORTH && !dead[loc.x][loc.y-1] )
-        out.push_back(MazePoint{0, -1});
-    if(t.exits & (unsigned char)AdvancedMapTile::Direction::SOUTH && !dead[loc.x][loc.y+1] )
-        out.push_back(MazePoint{0, 1});
-    if(t.exits & (unsigned char)AdvancedMapTile::Direction::EAST && !dead[loc.x+1][loc.y] )
-        out.push_back(MazePoint{1, 0});
-    if(t.exits & (unsigned char)AdvancedMapTile::Direction::WEST && !dead[loc.x-1][loc.y] )
-        out.push_back(MazePoint{-1, 0});
-}
-
-//Get all directions that can be moved to from a point
-//which aren't known dead ends or already visited
-void AdvJumperPlayer::getValidMoves(const MazePoint& loc, vector<MazePoint>& out)
-{
-    AdvancedMapTile& t = explored[loc.x][loc.y];
-    out.clear();
-    //cerr << "Getting valid moves from " << loc.x << ", " << loc.y << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::NORTH) << " | " << !dead[loc.x][loc.y-1] << " | " << !visited[loc.x][loc.y-1] << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::SOUTH) << " | " << !dead[loc.x][loc.y+1] << " | " << !visited[loc.x][loc.y+1] << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::EAST) << " | " << !dead[loc.x+1][loc.y] << " | " << !visited[loc.x+1][loc.y] << endl;
-    //cerr << (int)(t.exits & (unsigned char)MapTile::Direction::WEST) << " | " << !dead[loc.x-1][loc.y] << " | " << !visited[loc.x-1][loc.y] << endl;
-
-    if(t.exits & (unsigned char)AdvancedMapTile::Direction::NORTH && !dead[loc.x][loc.y-1] && !visited[loc.x][loc.y-1])
-        out.push_back(MazePoint{0, -1});
-    if(t.exits & (unsigned char)AdvancedMapTile::Direction::SOUTH && !dead[loc.x][loc.y+1] && !visited[loc.x][loc.y+1])
-        out.push_back(MazePoint{0, 1});
-    if(t.exits & (unsigned char)AdvancedMapTile::Direction::EAST && !dead[loc.x+1][loc.y] && !visited[loc.x+1][loc.y])
-        out.push_back(MazePoint{1, 0});
-    if(t.exits & (unsigned char)AdvancedMapTile::Direction::WEST && !dead[loc.x-1][loc.y] && !visited[loc.x-1][loc.y])
-        out.push_back(MazePoint{-1, 0});
-}
-
-bool AdvJumperPlayer::nextToUnknown(const MazePoint& p)
-{
-    if(explored[p.x].find(p.y+1) == explored[p.x].end()) return true;
-    if(explored[p.x].find(p.y-1) == explored[p.x].end()) return true;
-    if(explored[p.x+1].find(p.y) == explored[p.x+1].end()) return true;
-    if(explored[p.x-1].find(p.y) == explored[p.x-1].end()) return true;
-    return false;
-}
-
-bool AdvJumperPlayer::isExit(const MazePoint& p)
-{
-    return explored[p.x][p.y].isExit;
-}
-
-void AdvJumperPlayer::bfsDead(const MazePoint& start)
-{
-    //Don't mark already known dead or visited places'
-    if(visited[start.x][start.y] || dead[start.x][start.y] ||
-        nextToUnknown(start) || isExit(start)) return;
-
-    //cerr << "BFS from " << start.x << ", " << start.y << endl;
-    static vector<MazePoint> dirs;
-    getValidDirections(start, dirs);
-
-    if(dirs.size() == 1)
-    {
-        //cerr << "Dead end!" << endl;
-        dead[start.x][start.y] = true;
-        bfsDead(dirs[0]);
-    }
-}
-
-AdvancedPlayerMove AdvJumperPlayer::move(const AdvancedMapTile* surroundings,                //Const pointer to local area
+AdvancedPlayerMove bookkeeping(const AdvancedMapTile* surroundings,                //Const pointer to local area
                             const uint& area_width, const uint& area_height,    //Size of local area
                             const uint& loc_x, const uint& loc_y)
 {
     AdvancedPlayerMove out;
-
-    const AdvancedMapTile& current = surroundings[loc_y*area_width + loc_x];
-    if(current.uid != prevUid)
+    AdvancedMapTile currentTile = surroundings[area_width*loc_y + loc_x];
+    if(!firstTurn && lastTile.uid != currentTile.uid)
     {
-        currLocation = nextLocation;
-        if(teleported)
-            backtrace.pop();
+        if(lastMove.attemptedMove == AdvancedPlayerMove::Move::MOVETO)
+            location = location + lastMove.destination;
+        else if(lastMove.attemptedMove == AdvancedPlayerMove::Move::WALLBREAK ||
+                lastMove.attemptedMove == AdvancedPlayerMove::Move::WALLPHASE)
+            switch(lastMove.dir)
+            {
+                case AdvancedMapTile::Direction::NORTH:
+                    location.y -= 1; break;
+                case AdvancedMapTile::Direction::SOUTH:
+                    location.y += 1; break;
+                case AdvancedMapTile::Direction::WEST:
+                    location.x -= 1; break;
+                case AdvancedMapTile::Direction::EAST:
+                    location.x += 1; break;
+            }
     }
-    prevUid = current.uid;
-    visited[currLocation.x][currLocation.y] = true;
 
-    //Copy curroundings into local map
+    lastTile = currentTile;
+    firstTurn = false;
+    lastMove = AdvancedPlayerMove();
+
+    visited[location.x][location.y] = true;
+
     auto iter = surroundings;
-    for(uint j=0, j_ = currLocation.y - loc_y; j < area_height; j++, j_++)
-        for(uint i=0, i_ = currLocation.x - loc_x; i < area_width; i++, i_++)
-        {
-            if((*iter).exits != 0)
-                explored[i_][j_] = *(iter);
-            iter++;
-        }
-
-    //Fill in new dead ends
-    for(int j=0, j_ = currLocation.y - loc_y; j < (int)area_height; j++, j_++)
-        for(int i=0, i_ = currLocation.x - loc_x; i < (int)area_width; i++, i_++)
-        {
-            bfsDead(MazePoint{i_, j_});
-        }
-
-    static vector<MazePoint> moves;
-    getValidMoves(currLocation, moves);
-
-    //No moves means dead end; move back to last intersection
-    if(moves.size() == 0)
+    for(int i=0; i<area_height; i++)
     {
-        if(backtrace.size())
+        for(int j=0; j<area_width; j++)
         {
-            MazePoint to = backtrace.top();
-
-            teleported = true;
-            out.attemptedMove = AdvancedPlayerMove::Move::MOVETO;
-            out.destination = to - currLocation;
-
-            nextLocation = currLocation + out.destination;
+            if(iter->exits != 0)
+            {
+                world[j][i] = *iter;
+                bfsDeadEnds(MazePoint(j, i));
+                bfsExit(MazePoint(j, i));
+            }
         }
+    }
+
+    //Check if we can move onto (or next to) the exit path
+    out = moveOntoExitPath();
+    if(out.attemptedMove != AdvancedPlayerMove::Move::NOOP) return out;
+
+    //See if we know how to get to somewhere further on the target line
+    vector<MazePoint> newPath = checkPathToTargetLine();
+    if(newPath.size() > 0) plannedPath = newPath;
+
+    //If we previously planned a path, follow along it
+    if(plannedPath.size())
+    {
+        out.attemptedMove = AdvancedPlayerMove::Move::MOVETO;
+        out.destination = location-plannedPath.front();
+        plannedPath.pop_front();
+    }
+
+    return out;
+}
+
+AdvancedPlayerMove Spartacus::move(const AdvancedMapTile* surroundings,                //Const pointer to local area
+                            const uint& area_width, const uint& area_height,    //Size of local area
+                            const uint& loc_x, const uint& loc_y)
+{
+    AdvancedPlayerMove out = bookkeeping(surroundings, area_width, area_height, loc_x, loc_y);
+    if(out.attemptedMove != AdvancedPlayerMove::Move::NOOP) 
+    {
+        lastMove = out;
         return out;
     }
 
-    //Intersection, add it to our stack to jump back later
-    //Only need to check > 1 because none of the moves included
-    //contain the previous location
-    if(moves.size() > 1)
-        backtrace.push(currLocation);
-    
-    out.attemptedMove = AdvancedPlayerMove::Move::MOVETO;
-    out.destination = moves[0];
-
-    teleported = false;
-    nextLocation = currLocation + out.destination;
     return out;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+ostream& operator <<(ostream& out, queue<MazePoint> q)
+{
+    while(q.size())
+    {
+        out << "(" << q.front().x << ", " << q.front().y << ") ";
+        q.pop();
+    }
+    return out;
+}
+
+int main()
+{
+    cout << "Trivial cases..." << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(0, 10)) << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(0, -10)) << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(10, 0)) << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(-10, 0)) << endl;
+
+    cout << endl << "45 degrees..." << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(10, 10)) << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(10, -10)) << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(-10, -10)) << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(-10, 10)) << endl;
+
+    cout << endl << "Other..." << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(10, 5)) << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(5, 10)) << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(-5, 10)) << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(-10, 5)) << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(-10, -5)) << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(-5, -10)) << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(5, -10)) << endl;
+    cout << Bresenham(MazePoint(0, 0), MazePoint(10, -5)) << endl;
+
+    cout << Bresenham(MazePoint(0, 0), MazePoint(11, 7)) << endl;
+}
+*/
