@@ -10,7 +10,7 @@
 class BasicRules : public RuleEnforcer<BasicPlayer, BasicPlayerData, MapTile, MazeSettings>
 {
     std::unordered_map<BasicPlayer*, unsigned int> _playerIds;
-    int playerCount = 0;
+    uint playerCount = 0;
 
 public:
     bool playerIsDifferent(const BasicPlayerData& before, const BasicPlayerData& after)
@@ -23,4 +23,4 @@ public:
     bool playerIsDone(BasicPlayerData playerData, const maze<MapTile>& m);
 };
 
-#endif;
+#endif

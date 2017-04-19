@@ -95,7 +95,7 @@ typename MazeVisualizer<PlayerType, PlayerDataType, Tile>::color MazeVisualizer<
             return (*yit).second;
     }
 
-    return color{0, 0, 0};
+    return color{255, 255, 255};
 }
 
 template<class PlayerType, class PlayerDataType, class Tile>
@@ -145,7 +145,9 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::_drawCell(const unsigned 
                (west && j < _wall))
             {
                 //cerr << "\t\tWall" << endl;
-                *(iter++) = *(iter++) = *(iter++) = 0;
+                *(iter++) = 0;
+                *(iter++) = 0;
+                *(iter++) = 0;
             }
             else
             {

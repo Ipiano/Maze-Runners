@@ -8,6 +8,7 @@ typedef unsigned int uint;
 struct MazePoint
 {
     long long int x, y;
+    MazePoint(long long int X=0, long long int Y=0) : x(X), y(Y) {}
 };
 
 struct MapTile
@@ -90,6 +91,8 @@ struct MazeSettings
 
     uint exit_x;
     uint exit_y;           //Maze exit relative to player start; -1, -1 for unknown
+    MazeSettings(uint w=0, uint h=0, bool mw=false, uint ex=0, uint ey=0) :
+       map_width(w), map_height(h), map_wraps(mw), exit_x(ex), exit_y(ey) {}
 };
 
 
