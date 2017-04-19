@@ -10,7 +10,7 @@ LINK = g++
 CFLAGS = -std=c++11 -Wall -O
 CXXFLAGS = $(CFLAGS)
 
-PLAYEROBJS = randomPlayer.o rightHandPlayer.o jumperPlayer.o
+PLAYEROBJS = randomPlayer.o rightHandPlayer.o jumperPlayer.o spartacus.o
 
 PLAYERSOS = $(PLAYEROBJS:.o=.so)
 
