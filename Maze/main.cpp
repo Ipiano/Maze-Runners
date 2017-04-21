@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     AdvancedMover playerMove;
     AdvancedPartitioner part;
     AdvancedRules rules;
-    MazeRunner<AttributePlayer, AdvancedPlayerData, AdvancedPlayerMove, AdvancedMapTile, MazeSettings>
+    MazeRunner<AttributePlayer, AdvancedPlayerData, AdvancedPlayerMove, AdvancedMapTile>
     m(&mazeGen, &part, &playerMove, &rules, 400*400*20);
     PlayerLoader<AttributePlayer> g(&m);
 

@@ -7,7 +7,7 @@
 #include "../../Interfaces/backend_types.h"
 #include<unordered_map>
 
-class BasicRules : public RuleEnforcer<BasicPlayer, BasicPlayerData, MapTile, MazeSettings>
+class BasicRules : public RuleEnforcer<BasicPlayer, BasicPlayerData, MapTile>
 {
     std::unordered_map<BasicPlayer*, unsigned int> _playerIds;
     uint playerCount = 0;

@@ -10,21 +10,26 @@ MazeSettings BasicRules::getSettings(const maze<MapTile>& m)
 
 BasicPlayerData BasicRules::initPlayer(BasicPlayer* player, maze<MapTile>& m)
 {
+    BasicPlayerData out;
     if(_playerIds.find(player) != _playerIds.end())
     {
         int id = _playerIds[player];
-        return BasicPlayerData{m.players[id].x, m.players[id].y, id};
+        out = BasicPlayerData{m.players[id].x, m.players[id].y, id};
     }
-
-    if(m.players.size() > playerCount)
+    else if(m.players.size() > playerCount)
     {
         int id;
         _playerIds[player] = id = playerCount++;
-        return BasicPlayerData{m.players[id].x, m.players[id].y , id};
+        out = BasicPlayerData{m.players[id].x, m.players[id].y , id};
     }
-
-    return BasicPlayerData{0,0, -1};
+    else out = BasicPlayerData{0,0, -1};
     
+    MazeSettings set = getSettings(m);
+    set.exit_x = m.exit.x - out.x;
+    set.exit_y = m.exit.y - out.y;
+    player->setMazeSettings(set);
+
+    return out;
 }
 
 bool BasicRules::playerGetsTurn(BasicPlayerData playerData, const maze<MapTile>& m)
