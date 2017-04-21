@@ -8,7 +8,7 @@
 #include "../../Interfaces/backend_types.h"
 #include<unordered_map>
 
-class AdvancedRules : public RuleEnforcer<AttributePlayer, AdvancedPlayerData, AdvancedMapTile, MazeSettings>
+class AdvancedRules : public RuleEnforcer<AttributePlayer, AdvancedPlayerData, AdvancedMapTile>
 {
     std::unordered_map<AttributePlayer*, unsigned int> _playerIds;
     uint playerCount = 0;

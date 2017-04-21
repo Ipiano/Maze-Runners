@@ -16,8 +16,8 @@
 #include "mazerunnerbase.h"
 #include "playergame.h"
 
-#define RUNNER_TEMPLATE template<class PlayerType, class PlayerDataType, class PlayerMoveType, class Tile, class MazeSettingsType>
-#define RUNNER_TYPE MazeRunner<PlayerType, PlayerDataType, PlayerMoveType, Tile, MazeSettingsType>
+#define RUNNER_TEMPLATE template<class PlayerType, class PlayerDataType, class PlayerMoveType, class Tile>
+#define RUNNER_TYPE MazeRunner<PlayerType, PlayerDataType, PlayerMoveType, Tile>
 
 //Facilitates creating a maze and letting players
 //take turns moving through it until end conditions are met
@@ -28,7 +28,7 @@ class MazeRunner : public MazeRunnerBase, public MazeRunnerAccess<PlayerType, Pl
     MazeGenerator<Tile>* _gen;
     MazePartitioner<PlayerDataType, Tile>* _part;
     PlayerMover<PlayerDataType, PlayerMoveType, Tile>* _move;
-    RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* _rules;
+    RuleEnforcer<PlayerType, PlayerDataType, Tile>* _rules;
     
     maze<Tile> _m;
     unsigned int _max_turn;
@@ -41,7 +41,7 @@ protected:
 
 public:
     MazeRunner(MazeGenerator<Tile>* gen, MazePartitioner<PlayerDataType, Tile>* part, PlayerMover<PlayerDataType, PlayerMoveType, Tile>* move, 
-               RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* rules,
+               RuleEnforcer<PlayerType, PlayerDataType, Tile>* rules,
                unsigned int max_turns, unsigned int seed = 0);
     ~MazeRunner();
 
@@ -64,7 +64,7 @@ public:
 
 RUNNER_TEMPLATE
 RUNNER_TYPE::MazeRunner(MazeGenerator<Tile>* gen, MazePartitioner<PlayerDataType, Tile>* part, PlayerMover<PlayerDataType, PlayerMoveType, Tile>* move, 
-               RuleEnforcer<PlayerType, PlayerDataType, Tile, MazeSettingsType>* rules, unsigned int max_turns, unsigned int seed) 
+               RuleEnforcer<PlayerType, PlayerDataType, Tile>* rules, unsigned int max_turns, unsigned int seed) 
 : _gen(gen), _part(part), _move(move), _rules(rules), _max_turn(max_turns), _seed(seed)
 {
 
@@ -168,11 +168,8 @@ void RUNNER_TYPE::setup()
     _turn_no = 0;
     _m = _gen->generateMaze(_players.size());
 
-    MazeSettingsType set = _rules->getSettings(_m);
-
     for(auto& p : _players)
     {
-        p.first->setMazeSettings(set);
         p.second = _rules->initPlayer(p.first, _m);
     }
 }
