@@ -89,6 +89,7 @@ maze<AdvancedMapTile> AdvancedGenerator::generateMaze(unsigned int players)
 
     unordered_map<uint, unordered_map<uint, bool>> visited;
     vector<queue<point>> startSets;
+    vector<queue<point>> smallSets;
     queue<point> front;
     front.push(out.exit);
     visited[out.exit.x][out.exit.y] = true;
@@ -99,6 +100,8 @@ maze<AdvancedMapTile> AdvancedGenerator::generateMaze(unsigned int players)
             //cerr << "Added front size " << front.size() << endl;
             startSets.push_back(front);
         }
+        else
+            smallSets.push_back(front);
 
         int frontSize = front.size();
         for(int i=0; i<frontSize; i++)
@@ -152,22 +155,37 @@ maze<AdvancedMapTile> AdvancedGenerator::generateMaze(unsigned int players)
 
     //Pick a random set of starts from the second half of the sets
     //To give some variety
-    queue<point> startQ = startSets[rand()%(startSets.size()/2) + startSets.size()/2];
+    queue<point> startQ;
+    if(startSets.size() > 1)
+    {
+        startQ = startSets[rand()%(startSets.size()/2) + startSets.size()/2];
+    }
+    else if(startSets.size() == 1)
+    {
+        startQ = startSets[0];
+    }
+    else
+    {
+        startQ = smallSets.back();
+    }
+
     vector<point> starts;
 
     //cerr << "Picking player starts from " << startQ.size() << endl;
     while(startQ.size())
     {
-        //cerr << startQ.front().x << ", " << startQ.front().y << endl;
         starts.push_back(startQ.front());
         startQ.pop();
     }
 
+    vector<point> list;
+
     for(int i=0; i<players; i++)
     {
-        int startInd = rand()%starts.size();
-        out.players.push_back(starts[startInd]);
-        starts.erase(starts.begin() + startInd);
+        if(list.size() == 0) list = starts;
+        int startInd = rand()%list.size();
+        out.players.push_back(list[startInd]);
+        list.erase(list.begin() + startInd);
     }
 
     cout << "Done!" << endl;
