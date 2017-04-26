@@ -212,7 +212,11 @@ void AdvancedMover::performPlayerPendingMove(AdvancedPlayerData& playerData,
         auto& newTile = m.at(playerData.x, playerData.y);
         auto& oldTile = m.at(startx, starty);
 
-        oldTile.players.erase(find(oldTile.players.begin(), oldTile.players.end(), playerData.id));
+        auto iter = find(oldTile.players.begin(), oldTile.players.end(), playerData.id);
+        if(iter != oldTile.players.end())
+        {
+            oldTile.players.erase(iter);
+        }
         newTile.players.push_back(playerData.id);
         if(newTile.hasStickyBomb)
         {

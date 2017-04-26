@@ -29,7 +29,6 @@ class MazeVisualizer : public Widget
     unsigned int _wall;
     std::unordered_map<unsigned int, std::unordered_map<unsigned int, color>> _paths;
     std::unordered_map<PlayerType*, point> _playerLocations;
-    std::unordered_map<PlayerType*, Tile> _playerTiles;
 
     void _drawCell(const unsigned int& x, const unsigned int& y, const Tile& tile);
     void _drawCell(const unsigned int& x, const unsigned int& y, const Tile& tile, const color& rgb);
@@ -186,7 +185,7 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::draw(const DrawingCanvas*
     for(const auto& p : *players)
     {
         auto& pLoc = _playerLocations[p.first];
-        auto& pTile = _playerTiles[p.first];
+        auto pTile = maze.at(pLoc.x, pLoc.y);
         auto mTile = maze.at(p.second.x, p.second.y);
         if(pLoc.x != p.second.x || pLoc.y != p.second.y)
         {
@@ -213,7 +212,6 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::draw(const DrawingCanvas*
                 _buffer = nullptr;
             }
         }
-        pTile = mTile;
     }
 
     if(_buffer == nullptr)
