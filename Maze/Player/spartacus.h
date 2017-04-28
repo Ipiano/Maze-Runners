@@ -20,11 +20,15 @@ class Spartacus : public AttributePlayer
     std::vector<MazePoint> targetLine;
     std::vector<MazePoint> plannedPath;
 
+    std::stack<MazePoint> intersections;
+
     MazePoint location;
     AdvancedPlayerMove lastMove;
     AdvancedMapTile lastTile;
     bool firstTurn;
+    MazePoint exitLoc;
 
+    std::unordered_map<int, std::unordered_map<int, bool>> visited;
     std::unordered_map<int, std::unordered_map<int, bool>> deadEnd;
     std::unordered_map<int, std::unordered_map<int, int>> exitDists;
     std::unordered_map<int, std::unordered_map<int, AdvancedMapTile>> world;
@@ -35,7 +39,7 @@ public:
 
     virtual PlayerAttributes getAttributes(unsigned int points)
     {
-        return PlayerAttributes{6,0,0,0,3,0,0,1};
+        return PlayerAttributes{3,0,3,0,0,0,0,1};
     }
 
     //Sets up the player to run a specific maze type
@@ -52,7 +56,8 @@ public:
     std::vector<MazePoint> checkPathToTargetLine();
     void getValidDirections(const MazePoint& loc, std::vector<MazePoint>& out);
     AdvancedPlayerMove moveOntoExitPath();
-
+    MazePoint closestToExit(const std::vector<MazePoint>& goodMoves);
+    bool pointEnclosed(const MazePoint& start, const MazePoint& end);
 
     //Main player interface. The game will call getMove and the player will
     //return a direction to move. If it is an invalid direction, they forfeit their
