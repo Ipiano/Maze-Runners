@@ -29,7 +29,6 @@ class MazeVisualizer : public Widget
     unsigned int _wall;
     std::unordered_map<unsigned int, std::unordered_map<unsigned int, color>> _paths;
     std::unordered_map<PlayerType*, point> _playerLocations;
-    std::unordered_map<PlayerType*, Tile> _playerTiles;
 
     void _drawCell(const unsigned int& x, const unsigned int& y, const Tile& tile);
     void _drawCell(const unsigned int& x, const unsigned int& y, const Tile& tile, const color& rgb);
@@ -129,8 +128,8 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::_drawCell(const unsigned 
     //cerr << "Total offset " << rowBytes*(y_+1) + (y_<_exH?(y_+1)*_buffW*3:_exH*_buffW*3) - _buffW*3 + skipBytes << endl;
 
     bool north = ((tile.exits & (unsigned char)MapTile::Direction::NORTH) == 0);
-    //bool south = ((tile.exits & (unsigned char)MapTile::Direction::SOUTH) == 0);
-    //bool east = ((tile.exits & (unsigned char)MapTile::Direction::EAST) == 0);
+    bool south = ((tile.exits & (unsigned char)MapTile::Direction::SOUTH) == 0);
+    bool east = ((tile.exits & (unsigned char)MapTile::Direction::EAST) == 0);
     bool west = ((tile.exits & (unsigned char)MapTile::Direction::WEST) == 0);
 
     //cerr << north << " : " << south << " : " << east << " : " << west << endl;
@@ -141,8 +140,8 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::_drawCell(const unsigned 
         //cerr << "\t" << _buffW*i*3 << endl;
         for(uint j=0; j<thsW; j++)
         {
-            if((north && i < _wall) ||
-               (west && j < _wall))
+            if((north && i < _wall) || (south && i > thsH-_wall) ||
+               (west && j < _wall) || (east && j > thsW-_wall))
             {
                 //cerr << "\t\tWall" << endl;
                 *(iter++) = 0;
@@ -186,7 +185,7 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::draw(const DrawingCanvas*
     for(const auto& p : *players)
     {
         auto& pLoc = _playerLocations[p.first];
-        auto& pTile = _playerTiles[p.first];
+        auto pTile = maze.at(pLoc.x, pLoc.y);
         auto mTile = maze.at(p.second.x, p.second.y);
         if(pLoc.x != p.second.x || pLoc.y != p.second.y)
         {
@@ -213,7 +212,6 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::draw(const DrawingCanvas*
                 _buffer = nullptr;
             }
         }
-        pTile = mTile;
     }
 
     if(_buffer == nullptr)
@@ -228,7 +226,7 @@ void MazeVisualizer<PlayerType, PlayerDataType, Tile>::draw(const DrawingCanvas*
         //cerr << "Remaining space " << _exW << ", " << _exH << endl;
 
 	
-        _wall = (int)std::min(_cellW, _cellH)*0.3;
+        _wall = (int)(std::min(_cellW, _cellH)*0.3)/2;
         if(_cellW > 1 && _cellH > 1 && _wall < 1) _wall = 1;
 	
 	

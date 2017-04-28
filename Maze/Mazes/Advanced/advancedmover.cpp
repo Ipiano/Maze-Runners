@@ -6,10 +6,25 @@
 #include <algorithm>
 using namespace std;
 
+MazePoint operator + (const MazePoint& l, const MazePoint& r)
+{
+    return MazePoint{l.x + r.x, l.y + r.y};
+}
+
+bool AdvancedMover::adjacentAndConnected(maze<AdvancedMapTile>& m, const MazePoint& p1, const MazePoint& p2)
+{
+    return adjacentAndConnected(m, p1.x, p1.y, p2.x, p2.y);
+}
+
 bool AdvancedMover::adjacentAndConnected(maze<AdvancedMapTile>& m, const uint& x1, const uint& y1, const uint& x2, const uint& y2)
 {
     //Check if tiles are not adjacent
-    if(abs(x1-x2) + abs(y1-y2) != 1) return false;
+    //std::cerr << "Checking " << x1 << ", " << y1 << " : " << x2 << ", " << y2 << std::endl;
+    if(abs((long long)x1-(long long)x2) + abs((long long)y1-(long long)y2) != 1) 
+    {
+        //std::cerr << "Rooms not adjacent" << std::endl;
+        return false;
+    }
 
     //Check if connected
     AdvancedMapTile t1 = m.at(x1, y1);
@@ -38,29 +53,36 @@ MazePoint AdvancedMover::closestPointToExit(MazePoint current, maze<AdvancedMapT
     int frontSize = 1;
     distances[m.exit.x][m.exit.y] = 1;
     bfs.push(MazePoint(m.exit.x, m.exit.y));
+
+    //std::cerr << "--------------------------------" << std::endl;
     while(bfs.size())
     {
+        //std::cerr << "Distance: " << currDist << std::endl;
         int nextFront = 0;
         for(int i=0; i<frontSize; i++)
         {
             MazePoint next = bfs.front();
             bfs.pop();
+            //std::cerr << next.x << ", " << next.y << std::endl;
 
             //If we reach the player location, check which of the four directions we came from
             if(next.x == current.x && next.y == current.y)
             {
-                if(distances[next.x-1][next.y] == currDist-1) return MazePoint{next.x-1, next.y};
-                if(distances[next.x+1][next.y] == currDist-1) return MazePoint{next.x+1, next.y};
-                if(distances[next.x][next.y-1] == currDist-1) return MazePoint{next.x, next.y-1};
-                if(distances[next.x][next.y+1] == currDist-1) return MazePoint{next.x, next.y+1};
+                if(adjacentAndConnected(m, next, next+MazePoint{-1, 0}) && 
+                    distances[next.x-1][next.y] == currDist-1) return MazePoint{next.x-1, next.y};
+                if(adjacentAndConnected(m, next, next+MazePoint{1, 0}) && 
+                    distances[next.x+1][next.y] == currDist-1) return MazePoint{next.x+1, next.y};
+                if(adjacentAndConnected(m, next, next+MazePoint{0, -1}) && 
+                    distances[next.x][next.y-1] == currDist-1) return MazePoint{next.x, next.y-1};
+                if(adjacentAndConnected(m, next, next+MazePoint{0, 1}) && 
+                    distances[next.x][next.y+1] == currDist-1) return MazePoint{next.x, next.y+1};
 
                 //Should only happen if they use luck from in a walls only room
-                cout << "You are REALLY unlucky!" << endl;;
+                cout << "You are REALLY unlucky!" << endl;
                 return current;
             }
 
-            AdvancedMapTile t = m.at(next.x, next.y);
-            if((t.exits & (unsigned int)AdvancedMapTile::Direction::NORTH)
+            if(adjacentAndConnected(m, next, next+MazePoint{0, -1})
                 && distances[next.x][next.y-1] == 0)
             {
                 distances[next.x][next.y-1] = currDist+1;
@@ -68,7 +90,7 @@ MazePoint AdvancedMover::closestPointToExit(MazePoint current, maze<AdvancedMapT
                 nextFront++;
                 bfs.push(MazePoint{next.x, next.y-1});
             }
-            if((t.exits & (unsigned int)AdvancedMapTile::Direction::SOUTH)
+            if(adjacentAndConnected(m, next, next+MazePoint{0, 1})
                 && distances[next.x][next.y+1] == 0)
             {
                 distances[next.x][next.y+1] = currDist+1;
@@ -76,7 +98,7 @@ MazePoint AdvancedMover::closestPointToExit(MazePoint current, maze<AdvancedMapT
                 nextFront++;
                 bfs.push(MazePoint{next.x, next.y+1});
             }
-            if((t.exits & (unsigned int)AdvancedMapTile::Direction::EAST)
+            if(adjacentAndConnected(m, next, next+MazePoint{1, 0})
                 && distances[next.x+1][next.y] == 0)
             {
                 distances[next.x+1][next.y] = currDist+1;
@@ -84,7 +106,7 @@ MazePoint AdvancedMover::closestPointToExit(MazePoint current, maze<AdvancedMapT
                 nextFront++;
                 bfs.push(MazePoint{next.x+1, next.y});
             }
-            if((t.exits & (unsigned int)AdvancedMapTile::Direction::WEST)
+            if(adjacentAndConnected(m, next, next+MazePoint{-1, 0})
                 && distances[next.x-1][next.y] == 0)
             {
                 distances[next.x-1][next.y] = currDist+1;
@@ -190,7 +212,11 @@ void AdvancedMover::performPlayerPendingMove(AdvancedPlayerData& playerData,
         auto& newTile = m.at(playerData.x, playerData.y);
         auto& oldTile = m.at(startx, starty);
 
-        oldTile.players.erase(find(oldTile.players.begin(), oldTile.players.end(), playerData.id));
+        auto iter = find(oldTile.players.begin(), oldTile.players.end(), playerData.id);
+        if(iter != oldTile.players.end())
+        {
+            oldTile.players.erase(iter);
+        }
         newTile.players.push_back(playerData.id);
         if(newTile.hasStickyBomb)
         {

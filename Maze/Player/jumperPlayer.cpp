@@ -237,13 +237,17 @@ AdvancedPlayerMove AdvJumperPlayer::move(const AdvancedMapTile* surroundings,   
                             const uint& loc_x, const uint& loc_y)
 {
     AdvancedPlayerMove out;
+    static vector<MazePoint> moves;
 
     const AdvancedMapTile& current = surroundings[loc_y*area_width + loc_x];
     if(current.uid != prevUid)
     {
         currLocation = nextLocation;
-        if(teleported)
+        getValidMoves(currLocation, moves);
+        if(teleported && moves.size() == 1)
+        {
             backtrace.pop();
+        }
     }
     prevUid = current.uid;
     visited[currLocation.x][currLocation.y] = true;
@@ -265,22 +269,28 @@ AdvancedPlayerMove AdvJumperPlayer::move(const AdvancedMapTile* surroundings,   
             bfsDead(MazePoint{i_, j_});
         }
 
-    static vector<MazePoint> moves;
     getValidMoves(currLocation, moves);
 
     //No moves means dead end; move back to last intersection
     if(moves.size() == 0)
     {
-        if(backtrace.size())
+        MazePoint to{0, 0};
+        while(moves.size() == 0 && backtrace.size())
         {
-            MazePoint to = backtrace.top();
-
-            teleported = true;
-            out.attemptedMove = AdvancedPlayerMove::Move::MOVETO;
-            out.destination = to - currLocation;
-
-            nextLocation = currLocation + out.destination;
+            to = backtrace.top();
+            getValidMoves(to, moves);
+            if(moves.size() == 0) backtrace.pop();
         }
+
+        if(moves.size())
+            to = to + moves[rand()%moves.size()];
+
+        teleported = true;
+        out.attemptedMove = AdvancedPlayerMove::Move::MOVETO;
+        out.destination = to - currLocation;
+
+        nextLocation = currLocation + out.destination;
+
         return out;
     }
 
@@ -291,7 +301,7 @@ AdvancedPlayerMove AdvJumperPlayer::move(const AdvancedMapTile* surroundings,   
         backtrace.push(currLocation);
     
     out.attemptedMove = AdvancedPlayerMove::Move::MOVETO;
-    out.destination = moves[0];
+    out.destination = moves[rand()%moves.size()];
 
     teleported = false;
     nextLocation = currLocation + out.destination;

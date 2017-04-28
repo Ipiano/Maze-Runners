@@ -13,7 +13,7 @@
 
 class JumperPlayer : public BasicPlayer
 {
-    unsigned char _color[3] = {255, 0, 255};
+    unsigned char _color[3] = {0, 0, 0};
 
     std::stack<MazePoint> backtrace;
     std::unordered_map<int, std::unordered_map<int, MapTile>> explored;
@@ -50,7 +50,13 @@ public:
     virtual std::string playerName(){return "Jumper";}
 
     //Return an unsigned char[3] RGB color array
-    virtual unsigned char* playerColor(){return _color;}
+    virtual unsigned char* playerColor()
+    {
+        _color[0] = rand()%255;
+        _color[1] = rand()%255;
+        _color[2] = rand()%255;
+        return _color;
+    }
 
     //Main player interface. The game will call getMove and the player will
     //return a direction to move. If it is an invalid direction, they forfeit their
@@ -63,7 +69,7 @@ public:
 
 class AdvJumperPlayer : public AttributePlayer
 {
-    unsigned char _color[3] = {255, 0, 255};
+    unsigned char _color[3] = {rand()%255, rand()%255, rand()%255};
 
     std::stack<MazePoint> backtrace;
     std::unordered_map<int, std::unordered_map<int, AdvancedMapTile>> explored;
@@ -105,8 +111,13 @@ public:
     virtual std::string playerName(){return "Jumper";}
 
     //Return an unsigned char[3] RGB color array
-    virtual unsigned char* playerColor(){return _color;}
-
+    virtual unsigned char* playerColor()
+    {
+        /*_color[0] = rand()%255;
+        _color[1] = rand()%255;
+        _color[2] = rand()%255;*/
+        return _color;
+    }
     //Main player interface. The game will call getMove and the player will
     //return a direction to move. If it is an invalid direction, they forfeit their
     //move that turn. The pointer is not guaranteed to remain valid after the function

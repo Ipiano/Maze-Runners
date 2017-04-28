@@ -62,20 +62,28 @@ maze<AdvancedMapTile> AdvancedGenerator::generateMaze(unsigned int players)
                 iter->exits |= (rand() % 8);
 
                 if(iter->exits & (uint)AdvancedMapTile::Direction::NORTH)
+                {
                     if(i>0) (iter-_w)->exits |= (uint)AdvancedMapTile::Direction::SOUTH;
                     else iter->exits &= ~(uint)AdvancedMapTile::Direction::NORTH;
+                }
 
                 if(iter->exits & (uint)AdvancedMapTile::Direction::SOUTH)
+                {
                     if(i<_h-1) (iter+_w)->exits |= (uint)AdvancedMapTile::Direction::NORTH;
                     else iter->exits &= ~(uint)AdvancedMapTile::Direction::SOUTH;
+                }
 
                 if(iter->exits & (uint)AdvancedMapTile::Direction::WEST)
+                {
                     if(j>0) (iter-1)->exits |= (uint)AdvancedMapTile::Direction::EAST;
                     else iter->exits &= ~(uint)AdvancedMapTile::Direction::WEST;
+                }
 
                 if(iter->exits & (uint)AdvancedMapTile::Direction::EAST)
+                {
                     if(j<_w-1) (iter+1)->exits |= (uint)AdvancedMapTile::Direction::WEST;
                     else iter->exits &= ~(uint)AdvancedMapTile::Direction::EAST;
+                }
             }
 
             ++iter;
@@ -180,7 +188,7 @@ maze<AdvancedMapTile> AdvancedGenerator::generateMaze(unsigned int players)
 
     vector<point> list;
 
-    for(int i=0; i<players; i++)
+    for(uint i=0; i<players; i++)
     {
         if(list.size() == 0) list = starts;
         int startInd = rand()%list.size();
