@@ -62,8 +62,12 @@ AdvancedPlayerData AdvancedRules::initPlayer(AttributePlayer* player, maze<Advan
 
     fillPlayerDataFromAttributes(p, out);
     MazeSettings set = getSettings(m);
-    set.exit_x = (long long)m.exit.x - out.x;
-    set.exit_y = (long long)m.exit.y - out.y;
+    set.exit_x = m.exit.x - out.x;
+    set.exit_y = m.exit.y - out.y;
+
+    //cerr << m.exit.x << ", " << m.exit.y << " - " << out.x << ", " << out.y << endl;
+    //cerr << set.exit_x << ", " << set.exit_y << endl;
+
     player->setMazeSettings(set);
 
     return out;

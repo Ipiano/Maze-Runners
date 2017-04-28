@@ -36,6 +36,7 @@ class MazeRunner : public MazeRunnerBase, public MazeRunnerAccess<PlayerType, Pl
 
 protected:
     uint _turn_no;
+    std::vector<PlayerType*> _playerList;
     std::unordered_map<PlayerType*, PlayerDataType> _players;
     std::unordered_map<PlayerType*, PlayerMoveType> _moves;
 
@@ -79,7 +80,7 @@ RUNNER_TYPE::~MazeRunner()
 RUNNER_TEMPLATE
 void RUNNER_TYPE::addPlayer(PlayerType* p)
 {
-    _players[p] = _rules->initPlayer(p, _m);
+    _playerList.push_back(p);
 }
 
 RUNNER_TEMPLATE
@@ -166,11 +167,11 @@ void RUNNER_TYPE::setup()
         srand(_seed);
 
     _turn_no = 0;
-    _m = _gen->generateMaze(_players.size());
+    _m = _gen->generateMaze(_playerList.size());
 
-    for(auto& p : _players)
+    for(auto& p : _playerList)
     {
-        p.second = _rules->initPlayer(p.first, _m);
+        _players[p] = _rules->initPlayer(p, _m);
     }
 }
 
