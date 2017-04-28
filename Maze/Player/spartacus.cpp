@@ -72,7 +72,7 @@ vector<MazePoint> Bresenham(MazePoint start, MazePoint end)
 
     for(int i=0; i<max(abs(deltay), abs(deltax))+1; i++)
     {
-        cerr << "Point " << curr.x << ", " << curr.y << endl;
+        //cerr << "Point " << curr.x << ", " << curr.y << endl;
         line.push_back(curr);
         error += deltaerr;
         if(error >= 0.5)
@@ -81,8 +81,10 @@ vector<MazePoint> Bresenham(MazePoint start, MazePoint end)
             error -= 1;
         }
         curr = curr + diffReg;
-        cerr << deltaerr << endl;
+        //cerr << deltaerr << endl;
     }
+
+    cerr << "Done" << endl;
 
     return line;
 }
