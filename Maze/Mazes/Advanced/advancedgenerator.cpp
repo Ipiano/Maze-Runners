@@ -59,7 +59,10 @@ maze<AdvancedMapTile> AdvancedGenerator::generateMaze(unsigned int players)
         {
             if(rand() % 100 < _cycles)
             {
-                iter->exits |= (rand() % 8);
+                iter->exits |= (rand() % 100 > 75 ? 1 : 0);
+                iter->exits |= (rand() % 100 > 75 ? 2 : 0);
+                iter->exits |= (rand() % 100 > 75 ? 4 : 0);
+                iter->exits |= (rand() % 100 > 75 ? 8 : 0);
 
                 if(iter->exits & (uint)AdvancedMapTile::Direction::NORTH)
                 {
