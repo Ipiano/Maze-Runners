@@ -93,6 +93,7 @@ maze<AdvancedMapTile> AdvancedGenerator::generateMaze(unsigned int players)
     maze<AdvancedMapTile> out(_maze, _w, _h, false);
 
     out.exit = point{rand()%_w, rand()%_h};
+    //cerr << "Maze exit: " << out.exit.x << ", " << out.exit.y << endl;
     _maze[_w*out.exit.y + out.exit.x].isExit = true;
 
     unordered_map<uint, unordered_map<uint, bool>> visited;
