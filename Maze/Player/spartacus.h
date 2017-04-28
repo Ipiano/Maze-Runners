@@ -11,6 +11,7 @@
 #include "../Interfaces/attributePlayer.h"
 #include "../attributeTypes.h"
 #include "../Interfaces/player.h"
+#include <vector>
 
 class Spartacus : public AttributePlayer
 {
@@ -24,7 +25,6 @@ class Spartacus : public AttributePlayer
     AdvancedMapTile lastTile;
     bool firstTurn;
 
-    std::unordered_map<int, std::unordered_map<int, bool>> visited;
     std::unordered_map<int, std::unordered_map<int, bool>> deadEnd;
     std::unordered_map<int, std::unordered_map<int, int>> exitDists;
     std::unordered_map<int, std::unordered_map<int, AdvancedMapTile>> world;
@@ -50,6 +50,9 @@ public:
     void bfsDeadEnds(const MazePoint& start);
     void bfsExit(const MazePoint& start);
     std::vector<MazePoint> checkPathToTargetLine();
+    void getValidDirections(const MazePoint& loc, std::vector<MazePoint>& out);
+    AdvancedPlayerMove moveOntoExitPath();
+
 
     //Main player interface. The game will call getMove and the player will
     //return a direction to move. If it is an invalid direction, they forfeit their
