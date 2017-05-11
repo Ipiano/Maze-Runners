@@ -2,7 +2,7 @@
 #define GLUTSCREENCANVAS_H
 
 #include <string>
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 
 #include "../IOInterfaces/DrawingCanvas.h"
 #include "../IOInterfaces/InputSignaler.h"

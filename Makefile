@@ -31,7 +31,7 @@ CFLAGS = -std=c++11 -Wall -O -I$(ALGODIR) -I$(IODIR) -I$(WIDGDIR) -I$(GLUTDIR) -
 CXXFLAGS = $(CFLAGS)
 
 # Math library
-GL_LIBS = -lglut -lGLU -lGL
+GL_LIBS = -lglut -lGL -lGLU
 LIBS = -lm -ldl -lanimalgo -ldraw -lpthread
 LIBDIRS = -L$(DRAWDIR) -L$(ALGODIR)
 MAKETARGS = all
@@ -50,7 +50,7 @@ libdraw.a:
 	cd $(DRAWDIR) && $(MAKE) $(MAKETARGS)
 
 visual: libanimalgo.a libdraw.a $(GAMEOBJS) $(ANIMOBJS)
-	$(LINK) -o $@ $(GAMEOBJS) $(ANIMOBJS) $(LIBDIRS) $(GL_LIBS) $(LIBS)
+	$(LINK) -o $@ $(GAMEOBJS) $(ANIMOBJS) $(LIBDIRS) $(LIBS) $(GL_LIBS)
 
 debug: CXXFLAGS += -g
 debug: MAKETARGS = debug
